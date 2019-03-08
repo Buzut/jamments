@@ -50,8 +50,6 @@ Ven  8 mar 2019 02:29:43 CET
 mysqld start
 ```
 
-I'd recommand using Europe/Paris or whatever timezone you are in, at least it will handle daylight savings automatically (CEST in summer in France for instance).
-
 ## Remove WordPress spam comments
 
 ```sql
@@ -66,8 +64,9 @@ You need to manually create the database.
 CREATE DATABASE blog_comments DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ```
 
-Now you should be able to execute the migration script. You have to set the config.js and the `wpDbConf` object in `migrateWordPress.js`.
+You have to set the `config.js` and the `wpDbConf` object in `migrateWordPress.js`.
 
-This script is quick and dirty. It actually doesn't import relations between threaded comments.
+Now, just run `npm run createTables` to create the tables and you should be good to go.
+You only have to `node migrateWordPress` to migrate your comments from WordPress.
 
-I'm pretty sure there is a better way, especially through the WordPress API that could be directly interfaced with JAMstack comments' API. This would be way better and more future proof. If you have time to tackle this, please PR!
+This script is quick and dirty and I'm pretty sure there is a better way, especially through the WordPress API that could be directly interfaced with JAMstack comments' API. This would be way better and more future proof. If you have time to tackle this, please PR!
