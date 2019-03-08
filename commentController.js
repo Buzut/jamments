@@ -4,45 +4,8 @@ const articleModel = require('./models/articleModel');
 const commentModel = require('./models/commentModel');
 const notificationModel = require('./models/notificationModel');
 const sendRes = require('./lib/sendRes');
-const BadRequestError = require('./lib/badRequestError');
+const { validateReqHeaders, validateReqLength, validateReqParams } = require('./lib/validators');
 const smartErrorHandler = require('./lib/smartErrorHandler');
-
-/**
- * Make sure post is urlencoded
- * @param { Object } headers
- * @return { Null | BadRequestError } null if everything's fine, Err otherwise
- */
-function validateReqHeaders(headers) {
-    if (!headers || !headers['content-type'] || headers['content-type'] !== 'application/x-www-form-urlencoded') {
-        throw new BadRequestError('Content-type must be "application/x-www-form-urlencoded"');
-    }
-
-    return null;
-}
-
-/**
- * Make sure body isn't larger than a MB
- * @param { Stream } body
- * @return { Null | BadRequestError } null if everything's fine, Err otherwise
- */
-function validateReqLength(body) {
-    // 1e6 ± 1MB
-    if (body.length > 1e6) return new BadRequestError('POST content can’t exceed 1MB', 413);
-    return null;
-}
-
-/**
- * Verify that no post param is missing
- * @param { Object } post
- * @return { Null | BadRequestError } null if everything's fine, Err otherwise
- */
-function validateParams(post) {
-    if (!post || !post.slug || !post.name || !post.email || !post.comment) {
-        return new BadRequestError('Some fields are missing');
-    }
-
-    return null;
-}
 
 /**
  * Parse data from request object and validate its content
@@ -63,7 +26,7 @@ function parseReqData(req) {
 
         req.on('end', () => {
             const post = qs.parse(body);
-            const missingParamErr = validateParams(post);
+            const missingParamErr = validateReqParams(post);
 
             if (missingParamErr) {
                 reject(missingParamErr);
