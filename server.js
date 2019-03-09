@@ -1,4 +1,5 @@
 const http = require('http');
+const config = require('./config');
 const { generateAllCaches } = require('./lib/cacheFilesGenerators');
 const logger = require('./lib/logger');
 const sendRes = require('./lib/sendRes');
@@ -12,6 +13,6 @@ http.createServer((req, res) => {
     // unknown route
     else sendRes(res, 404, 'Resource Not Found');
 })
-.listen(8888, () => {
+.listen(config.port, () => {
     logger.info('Listening for requests');
 });

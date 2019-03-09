@@ -25,5 +25,6 @@ module.exports = {
 
     // production only,
     // in development, logs are outputed to the console and ./applogs.log
-    appLogFile: '/var/log/jamComments.log'
+    appLogFile: '/var/log/jamComments.log',
+    port: 8888
 };
