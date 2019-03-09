@@ -1,7 +1,10 @@
 const http = require('http');
+const { generateAllCaches } = require('./lib/cacheFilesGenerators');
 const logger = require('./lib/logger');
 const sendRes = require('./lib/sendRes');
 const commentController = require('./commentController');
+
+generateAllCaches().catch(logger.error);
 
 http.createServer((req, res) => {
     if (req.url === '/comment/' && req.method === 'POST') commentController(req, res);

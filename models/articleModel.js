@@ -3,6 +3,13 @@ const db = require('../lib/connectDb');
 const { cleanSlug, hashToMd5 } = require('../lib/stringProcessors');
 
 /**
+ * Get all articles (ids and slugs)
+ */
+function getAll() {
+    return db(config.db.articlesTable).select('id', 'slug');
+}
+
+/**
  * Save article if doesn't already exist
  * @param { String } slug
  * @return { Promise }
@@ -18,4 +25,4 @@ function save(slug) {
     });
 }
 
-module.exports = { save };
+module.exports = { getAll, save };

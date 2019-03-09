@@ -1,11 +1,12 @@
 const qs = require('querystring');
-const userModel = require('./models/userModel');
+const sendRes = require('./lib/sendRes');
+const { generateArticleCache } = require('./lib/cacheFilesGenerators');
+const smartErrorHandler = require('./lib/smartErrorHandler');
+const { validateReqHeaders, validateReqLength, validateReqParams } = require('./lib/validators');
 const articleModel = require('./models/articleModel');
 const commentModel = require('./models/commentModel');
 const notificationModel = require('./models/notificationModel');
-const sendRes = require('./lib/sendRes');
-const { validateReqHeaders, validateReqLength, validateReqParams } = require('./lib/validators');
-const smartErrorHandler = require('./lib/smartErrorHandler');
+const userModel = require('./models/userModel');
 
 /**
  * Parse data from request object and validate its content
@@ -77,8 +78,11 @@ function handleComment(req, res) {
         validateReqHeaders(req.headers);
 
         parseReqData(req)
-        .then(saveComment)
-        .then(id => sendRes(res, 201, id[0].toString()))
+        .then(
+            postData => saveComment(postData)
+            .then(id => sendRes(res, 201, id[0].toString()))
+            .then(() => generateArticleCache(postData.slug))
+        )
         .catch(handleErr);
     }
 

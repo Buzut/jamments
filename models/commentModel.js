@@ -1,6 +1,28 @@
 const config = require('../config');
-const db = require('../lib/connectDb');
 const BadRequestError = require('../lib/badRequestError');
+const db = require('../lib/connectDb');
+const { cleanSlug, hashToMd5 } = require('../lib/stringProcessors');
+
+/**
+ * Get all comments (w/ authors names)
+ * @return { Promise }
+ */
+function getAll() {
+    return db(config.db.commentsTable).select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment', 'article_id')
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`);
+}
+
+/**
+ * Get comments for a given slug (w/ authors names)
+ * @param { String } slug
+ * @return { Promise }
+ */
+function getForSlug(slug) {
+    return db(config.db.commentsTable).select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment')
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+    .innerJoin(config.db.articlesTable, 'article_id', `${config.db.articlesTable}.id`)
+    .where({ md5_slug: hashToMd5(cleanSlug(slug)) });
+}
 
 /**
  * Validate and save comment
@@ -29,4 +51,4 @@ function save(articleId, userId, ip, comment, parentId) {
     return db(config.db.commentsTable).insert({ article_id: articleId, user_id: userId, ip, comment }, 'id'); // eslint-disable-line
 }
 
-module.exports = { save };
+module.exports = { save, getAll, getForSlug };
