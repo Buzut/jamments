@@ -14,13 +14,34 @@ You're free to choose the database you want to work with:
 It's written in Node.js and is automatically cached, so no worries, it's fast!
 
 ## Getting started
-### Create new database
-_Exemples below are MySQL but as it's standard SQL, it should be the same or almost the same in other DB engines._
+### Prerequisites
+You will need Node.js and npm. On most Linux distros, you should be able to install node straight from your package manager.
+
+```shell
+apt install nodejs && apt install npm
+```
+
+For more information on installation options, you should refer to Node.js [official documentation](https://nodejs.org/en/).
+
+### Database
+_Exemples below are MySQL but as it's standard SQL, it should be the same or almost the same for other DB engines._
 
 You need to manually create the database before everything.
 
 ```sql
 CREATE DATABASE blog_comments DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+-- dedicated user could be a good thing too
+CREATE USER comments@localhost IDENTIFIED BY 'YOUR PASSWD';
+
+-- and define rights
+GRANT ALL PRIVILEGES ON blog_comments.* TO comments@localhost;
+```
+
+You could actually have more restrictive rights, but you'll have to create the tables manually with a more privileged user.
+
+```sql
+GRANT SELECT, UPDATE, DELETE ON blog_comments.* TO comments@localhost;
 ```
 
 If you're willing to migrate comments from another commenting system, take a look at the [migration guide](./migrate.md).
@@ -28,7 +49,9 @@ If you're willing to migrate comments from another commenting system, take a loo
 ### Update `config.js`
 By default, `config.js` is working for a local testing database with root user and no password, this is definitely not what you want!
 
-So update it with your own settings. For more info about possible settings for different DB engines, check [Knex.js documentation](https://knexjs.org/#Installation-client).
+Hence you need to update `config.js` with your own settings. For more info about possible settings for different DB engines, check out [Knex.js documentation](https://knexjs.org/#Installation-client).
+
+Now to create the tables, just run `npm run createTables` and you're all set up.
 
 The tables are automatically created by the init script, but I leave theme here for reference.
 
