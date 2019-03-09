@@ -1,6 +1,6 @@
-const crypto = require('crypto');
 const config = require('../config');
 const db = require('../lib/connectDb');
+const { cleanSlug, hashToMd5 } = require('../lib/stringProcessors');
 
 /**
  * Save article if doesn't already exist
@@ -8,8 +8,8 @@ const db = require('../lib/connectDb');
  * @return { Promise }
  */
 function save(slug) {
-    const cleanedSlug = slug.trim().toLowerCase().replace(/^\/|\/$/g, '');
-    const md5Slug = crypto.createHash('md5').update(slug).digest('hex');
+    const cleanedSlug = cleanSlug(slug);
+    const md5Slug = hashToMd5(cleanedSlug);
 
     return db(config.db.articlesTable).select('id').where('md5_slug', md5Slug)
     .then((res) => {
