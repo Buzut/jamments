@@ -32,6 +32,8 @@ function getForSlug(slug) {
  * @param { String } comment
  * @param { String } parentId
  * @return { Promise }
+ * @return { Promise.resolve<Object> }
+ * @return { Promise.reject<Error> } knex Err or BadRequestError
  */
 function save(articleId, userId, ip, comment, parentId) {
     const cleandedParentId = parentId ? Number(parentId) : undefined;
