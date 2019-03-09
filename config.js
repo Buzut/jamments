@@ -14,10 +14,16 @@ module.exports = {
         usersTable: 'users',
         articlesTable: 'articles',
         commentsTable: 'comments',
-        notificationsTable: 'notifications',
+        notificationsTable: 'notifications'
+    },
 
-        // production only,
-        // in development, logs are outputed to the console and ./applogs.log
-        appLogFile: '/var/log/jamComments.log'
-    }
+    // this doesn't need to be changed either
+    cacheDirs: {
+        ext: '.json',
+        article: './article/'
+    },
+
+    // production only,
+    // in development, logs are outputed to the console and ./applogs.log
+    appLogFile: '/var/log/jamComments.log'
 };
