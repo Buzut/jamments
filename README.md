@@ -14,10 +14,12 @@ You're free to choose the database you want to work with:
 It's written in Node.js and is automatically cached, so no worries, it's fast!
 
 ## Getting started
-### Prerequisites
-You will need Node.js and npm. On most Linux distros, you should be able to install node straight from your package manager.
+
+### Dependencies
+You will need Node.js and npm on top of the database of your choice. On most Linux distros, you should be able to install Node straight from your package manager.
 
 ```shell
+# Debian flavor
 apt install nodejs && apt install npm
 ```
 
@@ -38,13 +40,17 @@ CREATE USER comments@localhost IDENTIFIED BY 'YOUR PASSWD';
 GRANT ALL PRIVILEGES ON blog_comments.* TO comments@localhost;
 ```
 
-You could actually have more restrictive rights, but you'll have to create the tables manually with a more privileged user.
+You could actually have more restrictive rights, but you'll have to [create the tables manually](./tables.sql) with a more privileged user.
 
 ```sql
 GRANT SELECT, UPDATE, DELETE ON blog_comments.* TO comments@localhost;
 ```
 
 If you're willing to migrate comments from another commenting system, take a look at the [migration guide](./migrate.md).
+
+## Download and install JAMStack comments
+For the exemple, we'll consider that you'll install JAMStack comments under `/var/www/comments/`.
+So download this repo, unzip it and install the dependencies with `npm i`.
 
 ### Update `config.js`
 By default, `config.js` is working for a local testing database with root user and no password, this is definitely not what you want!
@@ -53,59 +59,72 @@ Hence you need to update `config.js` with your own settings. For more info about
 
 Now to create the tables, just run `npm run createTables` and you're all set up.
 
-The tables are automatically created by the init script, but I leave theme here for reference.
+### Create a service
+Assuming you're using SytemD, here is a very succint service file. You should modify this according to your own settings, namely: `User`, `WorkingDirectory` and `ExecStart`.
 
-```sql
-CREATE TABLE users (
-    id INT UNSIGNED AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    md5_email VARCHAR(32) NOT NULL,
-    PRIMARY KEY (id),
-    INDEX ind_md5 (md5_email)
-);
+```shell
+# /etc/systemd/system/jamcomments.service
 
-CREATE TABLE articles (
-    id INT UNSIGNED AUTO_INCREMENT,
-    slug VARCHAR(255) NOT NULL,
-    md5_slug VARCHAR(32) NOT NULL,
-    PRIMARY KEY (id),
-    INDEX ind_md5 (md5_slug)
-);
+[Unit]
+Description=JAMStack comments API
+Documentation=https://github.com/Buzut/jamstack-comments
 
-CREATE TABLE comments (
-    id INT UNSIGNED AUTO_INCREMENT,
-    parent_id INT UNSIGNED,
-    article_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-    ip VARCHAR(255) NOT NULL,
-    submitted_at TIMESTAMP DEFAULT NOW(),
-    comment TEXT,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_com_parent
-        FOREIGN KEY (parent_id)
-        REFERENCES comments (id)
-    CONSTRAINT fk_com_article
-        FOREIGN KEY (article_id)
-        REFERENCES articles (id)
-    CONSTRAINT fk_com_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-);
+[Service]
+User=www-data
+WorkingDirectory=/var/www/jamstack-comments/
+Environment=PATH=/usr/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node /var/www/jamstack-comments/server.js
+Restart=always
 
-CREATE TABLE notifications (
-    id INT UNSIGNED AUTO_INCREMENT,
-    user_id INT UNSIGNED NOT NULL,
-    article_id INT UNSIGNED NOT NULL,
-    notify BOOL NOT NULL DEFAULT TRUE,
-    PRIMARY KEY (id),
-    INDEX ind_user (user_id)
-    INDEX ind_article (article_id)
-    CONSTRAINT fk_notif_article
-        FOREIGN KEY (article_id)
-        REFERENCES articles (id)
-    CONSTRAINT fk_notif_user
-        FOREIGN KEY (user_id)
-        REFERENCES users (id)
-);
+[Install]
+WantedBy=multi-user.target
 ```
+
+Then reaload SystemD, make the service start on boot and start it:
+
+```shell
+systemctl daemon-reload
+systemctl enable jamcomments
+systemctl start jamcomments
+```
+
+### Configure the web server
+Just pick the webserver you like. Exemple with Apache:
+
+```shell
+<VirtualHost comments.buzut.net:443>
+  Protocols h2 http/1.1
+  ServerName comments.my-blog.net
+
+  ServerAdmin qbusuttil@buzeo.me
+  DocumentRoot /var/www/comments
+
+  # HSTS
+  Header always set Strict-Transport-Security "max-age=15768000"
+
+  SSLEngine on
+  SSLCertificateFile /etc/letsencrypt/live/comments.my-blog.net/cert.pem
+  SSLCertificateKeyFile /etc/letsencrypt/live/comments.my-blog.net/privkey.pem
+  SSLCertificateChainFile /etc/letsencrypt/live/comments.my-blog.net/chain.pem
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+
+  Header always set Strict-Transport-Security "max-age=15768000"
+  ProxyPass /article/ !
+  ProxyPass "/" "http://localhost:8888/"
+
+  <Directory /var/www/comments/article/>
+     Options -Indexes +FollowSymLinks
+     AllowOverride All
+  </Directory>
+</VirtualHost>
+```
+
+The only specific thing is to tell the webserver to proxy the requests to the app but to serve directly the generated JSON files.
+
+## Contributing
+There's sure room for improvement, so feel free to hack around and submit PRs!
+Please just follow the style of the existing code, which is [Airbnb's style](http://airbnb.io/javascript/) with [minor modifications](.eslintrc).
+
+To maintain things clear and visual, please follow the [git commit template](https://github.com/Buzut/git-emojis-hook).
