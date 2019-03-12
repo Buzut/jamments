@@ -71,10 +71,10 @@ Documentation=https://github.com/Buzut/jamstack-comments
 
 [Service]
 User=www-data
-WorkingDirectory=/var/www/jamstack-comments/
+WorkingDirectory=/var/www/comments/
 Environment=PATH=/usr/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/node /var/www/jamstack-comments/server.js
+ExecStart=/usr/bin/node /var/www/comments/server.js
 Restart=always
 
 [Install]
@@ -93,11 +93,11 @@ systemctl start jamcomments
 Just pick the webserver you like. Exemple with Apache:
 
 ```shell
-<VirtualHost comments.buzut.net:443>
+<VirtualHost comments.my-blog.net:443>
   Protocols h2 http/1.1
   ServerName comments.my-blog.net
 
-  ServerAdmin qbusuttil@buzeo.me
+  ServerAdmin my@email.net
   DocumentRoot /var/www/comments
 
   # HSTS
