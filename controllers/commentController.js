@@ -1,12 +1,12 @@
 const qs = require('querystring');
-const sendRes = require('./lib/sendRes');
-const { generateArticleCache } = require('./lib/cacheFilesGenerators');
-const smartErrorHandler = require('./lib/smartErrorHandler');
-const { validateReqHeaders, validateReqLength, validateReqParams } = require('./lib/validators');
-const articleModel = require('./models/articleModel');
-const commentModel = require('./models/commentModel');
-const notificationModel = require('./models/notificationModel');
-const userModel = require('./models/userModel');
+const sendRes = require('../libs/sendRes');
+const { generateArticleCache } = require('../libs/cacheFilesGenerators');
+const smartErrorHandler = require('../libs/smartErrorHandler');
+const { validateReqHeaders, validateReqLength, validateReqParams } = require('../libs/validators');
+const articleModel = require('../models/articleModel');
+const commentModel = require('../models/commentModel');
+const notificationModel = require('../models/notificationModel');
+const userModel = require('../models/userModel');
 
 /**
  * Parse data from request object and validate its content

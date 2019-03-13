@@ -1,7 +1,7 @@
 const config = require('../config');
-const BadRequestError = require('../lib/badRequestError');
-const db = require('../lib/connectDb');
-const { cleanSlug, hashToMd5 } = require('../lib/stringProcessors');
+const BadRequestError = require('../libs/badRequestError');
+const db = require('../libs/connectDb');
+const { cleanSlug, hashToMd5 } = require('../libs/stringProcessors');
 
 /**
  * Get all comments (w/ authors names)

@@ -1,6 +1,6 @@
 const knex = require('knex');
 const config = require('./config');
-const db = require('./lib/connectDb');
+const db = require('./libs/connectDb');
 const userModel = require('./models/userModel');
 const articleModel = require('./models/articleModel');
 

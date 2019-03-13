@@ -1,9 +1,9 @@
 const http = require('http');
 const config = require('./config');
-const { generateAllCaches } = require('./lib/cacheFilesGenerators');
-const logger = require('./lib/logger');
-const sendRes = require('./lib/sendRes');
-const commentController = require('./commentController');
+const { generateAllCaches } = require('./libs/cacheFilesGenerators');
+const logger = require('./libs/logger');
+const sendRes = require('./libs/sendRes');
+const commentController = require('./controllers/commentController');
 
 generateAllCaches().catch(logger.error);
 

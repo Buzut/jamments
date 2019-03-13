@@ -1,6 +1,6 @@
 const config = require('../config');
-const db = require('../lib/connectDb');
-const { cleanSlug, hashToMd5 } = require('../lib/stringProcessors');
+const db = require('../libs/connectDb');
+const { cleanSlug, hashToMd5 } = require('../libs/stringProcessors');
 
 /**
  * Get all articles (ids and slugs)

@@ -1,6 +1,6 @@
 const config = require('../config');
-const db = require('../lib/connectDb');
-const { trim, lowerCase, hashToMd5 } = require('../lib/stringProcessors');
+const db = require('../libs/connectDb');
+const { trim, lowerCase, hashToMd5 } = require('../libs/stringProcessors');
 
 /**
  * Save user if doesn't already exist

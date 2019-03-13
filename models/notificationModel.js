@@ -1,5 +1,5 @@
 const config = require('../config');
-const db = require('../lib/connectDb');
+const db = require('../libs/connectDb');
 
 /**
  * Save user notification preference for an article (if not already set)
