@@ -123,6 +123,62 @@ Just pick the webserver you like. Exemple with Apache:
 
 The only specific thing is to tell the webserver to proxy the requests to the app but to serve directly the generated JSON files.
 
+### Connecting your website
+It's a dead simple API.
+
+Fetch comments by requesting the slug of your page with the JSON extension:
+
+```javascript
+// comments for page my-blog.net/i-love-jamstack/
+function getComments(slug) {
+    return fetch(url)
+    .then((res) => {
+        if (!res.ok) return Promise.reject(new Error(res.status));
+        return res.json();
+    });
+}
+
+// getting rid of starting and trailing slashes
+const slug = window.location.pathname.replace(/^\/|\/$/g, '');
+
+getJsonData(`https://comments.my-blog.net/article/${slug}.json`)
+.then((comments) => {
+    // whatever you wanna do with the comments
+})
+.catch(errorHandler);
+```
+
+Bear in mind that the comments you get from the API are raw, unsanitized comments, so be cautions, don't expose your users!
+
+To post a comment, it's almost as simple:
+
+```javascript
+// 4 params are required
+function postComment(body) {
+    const formData = new FormData();
+    Object.keys(body).forEach(key => formData.append(key, body[key]));
+
+    return fetch(`${commentsBaseAddress}/comment/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData)
+    })
+    .then((res) => {
+        if (!res.ok) return res.text().then((msg) => Promise.reject(new Error(msg)));
+        return Promise.resolve();
+    });
+}
+
+// now once you validated your comments and got the data
+postComment({ slug, comment, name, email })
+.then(() => {
+    // comment submitted 🎉
+})
+.catch((err) => {
+    // something happened
+});
+```
+
 ## Contributing
 There's sure room for improvement, so feel free to hack around and submit PRs!
 Please just follow the style of the existing code, which is [Airbnb's style](http://airbnb.io/javascript/) with [minor modifications](.eslintrc).
