@@ -1,4 +1,3 @@
-const getFirstElementIfArray = require('../libs/getFirstElementIfArray');
 const { sendNewCommentValidationMail } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
@@ -34,7 +33,7 @@ function saveComment({ slug, parent_id, name, email, ip, comment, notify }) { //
                     userEmail,
                     userMd5Email,
                     userSecret,
-                    commentId: getFirstElementIfArray(commentId)
+                    commentId
                 };
             })
         );
