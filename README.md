@@ -173,11 +173,16 @@ function postComment(body) {
 postComment({ slug, comment, name, email })
 .then(() => {
     // comment submitted 🎉
+    // [{ id: Number, parent_id: Number|Null, name: String, md5_email: String, submitted_at: String, comment: String }, …]
 })
 .catch((err) => {
     // something happened
 });
 ```
+
+Also, be aware that these exemples are not 100% compatible with all browsers. We here use the [*fetch API*](https://www.caniuse.com/#feat=fetch) and [*URLSearchParams*](https://www.caniuse.com/#feat=urlsearchparams) that, although well supported, won't work with older browsers.
+
+You could instead use the more ubiquitous [XMLHTTPRequest](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest).
 
 ## Contributing
 There's sure room for improvement, so feel free to hack around and submit PRs!
