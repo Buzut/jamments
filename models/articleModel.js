@@ -4,9 +4,22 @@ const { cleanSlug, hashToMd5 } = require('../libs/stringProcessors');
 
 /**
  * Get all articles (ids and slugs)
+ * @return { Promise }
  */
 function getAll() {
     return db(config.db.articlesTable).select('id', 'slug');
+}
+
+/**
+ * Get slug for an article
+ * @param { Number } id
+ * @return { Promise }
+ * @return { Promise.resolve<String> } slug
+ * @return { Promise.reject<Error> } knex Err
+ */
+function getSlug(id) {
+    return db(config.db.articlesTable).first('slug').where({ id })
+    .then(res => res.slug);
 }
 
 /**
@@ -25,4 +38,4 @@ function save(slug) {
     });
 }
 
-module.exports = { getAll, save };
+module.exports = { getAll, getSlug, save };

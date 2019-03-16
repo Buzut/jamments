@@ -1,7 +1,6 @@
 const config = require('../config');
 const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
-const { cleanSlug, hashToMd5 } = require('../libs/stringProcessors');
 
 /**
  * Get all comments (w/ authors names)
@@ -14,14 +13,13 @@ function getAll() {
 
 /**
  * Get comments for a given slug (w/ authors names)
- * @param { String } slug
+ * @param { Number } articleId
  * @return { Promise }
  */
-function getForSlug(slug) {
+function getForId(id) {
     return db(config.db.commentsTable).select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment')
     .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
-    .innerJoin(config.db.articlesTable, 'article_id', `${config.db.articlesTable}.id`)
-    .where({ md5_slug: hashToMd5(cleanSlug(slug)) });
+    .where({ article_id: id, approved: true });
 }
 
 /**
@@ -65,11 +63,11 @@ function save(articleId, userId, ip, comment, parentId) {
  * @param { Number } commentId
  * @param { String } userSecret
  * @return { Promise }
- * @return { Promise.resolve<Object> }
+ * @return { Promise.resolve<String> } articleId
  * @return { Promise.reject<Error> } knex Err or BadRequestError
  */
 function approve(commentId, userSecret) {
-    return db(config.db.commentsTable).first('secret')
+    return db(config.db.commentsTable).first('article_id')
     .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
     .where({
         [`${config.db.commentsTable}.id`]: commentId,
@@ -77,13 +75,14 @@ function approve(commentId, userSecret) {
     })
     .then((res) => {
         if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
-        return db(config.db.commentsTable).update('approved', true).where('id', commentId);
+        return db(config.db.commentsTable).update('approved', true).where('id', commentId)
+        .then(() => res.article_id);
     });
 }
 
 module.exports = {
     getAll,
-    getForSlug,
+    getForId,
     save,
     approve
 };

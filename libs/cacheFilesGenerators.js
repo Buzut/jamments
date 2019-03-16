@@ -49,11 +49,15 @@ function generateAllCaches() {
 
 /**
  * Generate cache file for a given article
- * @param { String } slug
+ * @param { Number } articleId
  * @return { Promise }
  */
-function generateArticleCache(slug) {
-    return commentModel.getForSlug(slug).then(comments => writeCacheFile(slug, comments));
+function generateArticleCache(articleId) {
+    return articleModel.getSlug(articleId)
+    .then(
+        slug => commentModel.getForId(articleId)
+        .then(comments => writeCacheFile(slug, comments))
+    );
 }
 
 module.exports = {

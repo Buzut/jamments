@@ -1,7 +1,7 @@
 const { sendNewCommentValidationMail } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
-// const { generateArticleCache } = require('../libs/cacheFilesGenerators');
+const { generateArticleCache } = require('../libs/cacheFilesGenerators');
 const smartErrorHandler = require('../libs/smartErrorHandler');
 const validateRequest = require('../libs/validateRequest');
 const articleModel = require('../models/articleModel');
@@ -82,7 +82,10 @@ function approveComment(req, res, commentId) {
         failMsg: 'user_secret should be 18 chars'
     }])
     .then(post => commentModel.approve(commentId, post.user_secret))
-    .then(() => sendRes(res, 204))
+    .then((articleId) => {
+        sendRes(res, 204);
+        return generateArticleCache(articleId);
+    })
     .catch(err => smartErrorHandler(err, res));
 }
 
