@@ -15,6 +15,7 @@
         "no-new": "off",
         "no-param-reassign": ["error", { "props": false }],
         "no-plusplus": "off",
+        "no-restricted-globals": "off",
         "no-restricted-syntax": "off",
         "no-underscore-dangle": "off"
     }
