@@ -69,6 +69,7 @@ function validateRequest(req, paramsList) {
         for (const param of paramsList) {
             let paramName;
             let paramType;
+            let paramCoerce;
             let paramOptional;
             let validatorFn;
             let validatorFailMsg;
@@ -86,6 +87,7 @@ function validateRequest(req, paramsList) {
                 else {
                     paramName = param.name;
                     paramType = param.type;
+                    paramCoerce = param.coerce;
                     paramOptional = param.optional;
                     validatorFn = param.validator;
                     validatorFailMsg = param.failMsg;
@@ -97,6 +99,7 @@ function validateRequest(req, paramsList) {
 
             else paramName = param;
 
+            if (paramCoerce && (paramType === 'integer' || paramType === 'number')) post[paramName] = Number(post[paramName]);
             const paramValue = post[paramName];
 
             // validate presence
@@ -107,6 +110,7 @@ function validateRequest(req, paramsList) {
             if (paramType) {
                 if (paramType === 'string' && !v8n().string().test(paramValue)) return wrongTypeErr(paramName, paramType);
                 if (paramType === 'number' && !v8n().number().test(paramValue)) return wrongTypeErr(paramName, paramType);
+                if (paramType === 'integer' && !v8n().number().test(paramValue)) return wrongTypeErr(paramName, paramType);
                 if (paramType === 'boolean' && !v8n().boolean().test(paramValue)) return wrongTypeErr(paramName, paramType);
             }
 
