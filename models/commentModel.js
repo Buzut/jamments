@@ -47,4 +47,30 @@ function save(articleId, userId, ip, comment, parentId) {
     return db(config.db.commentsTable).insert({ article_id: articleId, user_id: userId, ip, comment }, 'id'); // eslint-disable-line
 }
 
-module.exports = { save, getAll, getForSlug };
+/**
+ * Approve comment
+ * @param { Number } commentId
+ * @param { String } userSecret
+ * @return { Promise }
+ * @return { Promise.resolve<Object> }
+ * @return { Promise.reject<Error> } knex Err or BadRequestError
+ */
+function approve(commentId, userSecret) {
+    return db(config.db.commentsTable).first('secret')
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+    .where({
+        [`${config.db.commentsTable}.id`]: commentId,
+        secret: userSecret
+    })
+    .then((res) => {
+        if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
+        return db(config.db.commentsTable).update('approved', true).where('id', commentId);
+    });
+}
+
+module.exports = {
+    getAll,
+    getForSlug,
+    save,
+    approve
+};

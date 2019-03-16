@@ -70,4 +70,21 @@ function addComment(req, res) {
     .catch(err => smartErrorHandler(err, res));
 }
 
-module.exports = { addComment };
+/**
+ * Check if commentId & userSecret match and confirm comment
+ * @param { Object } req
+ * @param { Object } res
+ */
+function approveComment(req, res, commentId) {
+    validateRequest(req, [{
+        name: 'user_secret',
+        type: 'string',
+        validator: v => v.length(18),
+        failMsg: 'user_secret should be 18 chars'
+    }])
+    .then(post => commentModel.approve(commentId, post.user_secret))
+    .then(() => sendRes(res, 204))
+    .catch(err => smartErrorHandler(err, res));
+}
+
+module.exports = { addComment, approveComment };
