@@ -36,17 +36,11 @@ function getForSlug(slug) {
  * @return { Promise.reject<Error> } knex Err or BadRequestError
  */
 function save(articleId, userId, ip, comment, parentId) {
-    const cleandedParentId = parentId ? Number(parentId) : undefined;
-
-    if (parentId && isNaN(cleandedParentId)) {
-        return Promise.reject(new BadRequestError('parent_id must be a number'));
-    }
-
-    if (parentId && Number.isInteger(cleandedParentId)) {
-        return db(config.db.commentsTable).first('id').where({ id: cleandedParentId, article_id: articleId })
+    if (parentId && parentId) {
+        return db(config.db.commentsTable).first('id').where({ id: parentId, article_id: articleId })
         .then((res) => {
             if (!res) return Promise.reject(new BadRequestError('parent_id must be a valid article id'));
-            return db(config.db.commentsTable).insert({ article_id: articleId, user_id: userId, ip, comment, parent_id: cleandedParentId }, 'id'); // eslint-disable-line
+            return db(config.db.commentsTable).insert({ article_id: articleId, user_id: userId, ip, comment, parent_id: parentId }, 'id'); // eslint-disable-line
         });
     }
 
