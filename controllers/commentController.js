@@ -62,10 +62,10 @@ function addComment(req, res) {
         notify: !(typeof post.notify !== 'undefined' && (!post.notify || post.notify === 'false')),
         ip: req.connection.remoteAddress
     }))
-    .then(
-        commentValidationParams => Promise.resolve(sendRes(res, 201))
-        .then(() => sendNewCommentValidationMail(commentValidationParams))
-    )
+    .then((commentValidationParams) => {
+        sendRes(res, 201);
+        return sendNewCommentValidationMail(commentValidationParams);
+    })
     .catch(err => smartErrorHandler(err, res));
 }
 
