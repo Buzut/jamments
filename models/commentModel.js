@@ -38,14 +38,14 @@ function getForSlug(slug) {
 function save(articleId, userId, ip, comment, parentId) {
     const cleandedParentId = parentId ? Number(parentId) : undefined;
 
-    if (parentId && Number.isNaN(cleandedParentId)) {
+    if (parentId && isNaN(cleandedParentId)) {
         return Promise.reject(new BadRequestError('parent_id must be a number'));
     }
 
     if (parentId && Number.isInteger(cleandedParentId)) {
-        return db(config.db.commentsTable).select('id').where({ id: cleandedParentId, article_id: articleId })
+        return db(config.db.commentsTable).first('id').where({ id: cleandedParentId, article_id: articleId })
         .then((res) => {
-            if (!res || !res.length) return Promise.reject(new BadRequestError('parent_id must be a valid article id'));
+            if (!res) return Promise.reject(new BadRequestError('parent_id must be a valid article id'));
             return db(config.db.commentsTable).insert({ article_id: articleId, user_id: userId, ip, comment, parent_id: cleandedParentId }, 'id'); // eslint-disable-line
         });
     }
