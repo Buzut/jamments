@@ -1,3 +1,4 @@
+const uniqid = require('uniqid');
 const config = require('../config');
 const db = require('../libs/connectDb');
 const { trim, lowerCase, hashToMd5 } = require('../libs/stringProcessors');
@@ -13,10 +14,19 @@ function save(name, email) {
     const cleanedEmail = lowerCase(trim(email));
     const md5Email = hashToMd5(cleanedEmail);
 
-    return db(config.db.usersTable).select('id').where('md5_email', md5Email)
+    return db(config.db.usersTable).first('id', 'name', 'email', 'md5_email', 'secret',).where('md5_email', md5Email)
     .then((res) => {
-        if (res && res.length) return [res[0].id];
-        return db(config.db.usersTable).insert({ name: cleanedName, email: cleanedEmail, md5_email: md5Email }, 'id');
+        if (res) return [res.id, res.name, res.email, res.md5_email, res.secret];
+
+        const secret = uniqid();
+
+        return db(config.db.usersTable).insert({
+            secret,
+            name: cleanedName,
+            email: cleanedEmail,
+            md5_email: md5Email
+        })
+        .then(id => [id, cleanedName, cleanedEmail, md5Email, secret]);
     });
 }
 

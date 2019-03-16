@@ -12,6 +12,7 @@ function createUsers() {
             table.string('name').notNullable();
             table.string('email').notNullable();
             table.string('md5_email', 32).notNullable().index('ind_md5');
+            table.string('secret', 18).notNullable();
         });
     });
 }
@@ -40,6 +41,7 @@ function createComments() {
             table.string('ip').notNullable();
             table.timestamp('submitted_at').defaultTo(db.fn.now());
             table.text('comment');
+            table.boolean('approved').defaultTo(false);
             table.foreign('parent_id', 'fk_com_parent').references('comments.id');
             table.foreign('article_id', 'fk_com_article').references('articles.id');
             table.foreign('user_id', 'fk_com_user').references('users.id');

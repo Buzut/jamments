@@ -3,6 +3,7 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     md5_email VARCHAR(32) NOT NULL,
+    secret VARCHAR(18) NOT NULL,
     PRIMARY KEY (id),
     INDEX ind_md5 (md5_email)
 );
@@ -23,6 +24,7 @@ CREATE TABLE comments (
     ip VARCHAR(255) NOT NULL,
     submitted_at TIMESTAMP DEFAULT NOW(),
     comment TEXT,
+    approved BOOL NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
     CONSTRAINT fk_com_parent
         FOREIGN KEY (parent_id)

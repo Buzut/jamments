@@ -8,7 +8,7 @@ const commentController = require('./controllers/commentController');
 generateAllCaches().catch(logger.error);
 
 http.createServer((req, res) => {
-    if (req.url === '/comment/' && req.method === 'POST') commentController(req, res);
+    if (req.url === '/comment/' && req.method === 'POST') commentController.addComment(req, res);
 
     // unknown route
     else sendRes(res, 404, 'Resource Not Found');

@@ -1,4 +1,6 @@
 const qs = require('querystring');
+const getFirstElementIfArray = require('../libs/getFirstElementIfArray');
+const { sendNewCommentValidationMail } = require('../libs/emailSenders');
 const sendRes = require('../libs/sendRes');
 const { generateArticleCache } = require('../libs/cacheFilesGenerators');
 const smartErrorHandler = require('../libs/smartErrorHandler');
@@ -56,12 +58,21 @@ function parseReqData(req) {
  */
 function saveComment({ slug, parent_id, name, email, ip, comment, notify }) { // eslint-disable-line
     return userModel.save(name, email)
-    .then((userId) => { // eslint-disable-line
+    .then(([userId, userName, userEmail, userMd5Email, userSecret]) => { // eslint-disable-line
         return articleModel.save(slug)
-        .then((articleId) => { // eslint-disable-line
-            return notificationModel.save(userId, articleId, notify)
-            .then(() => commentModel.save(articleId, userId, ip, comment, parent_id));
-        });
+        .then(
+            articleId => notificationModel.save(userId, articleId, notify)
+            .then(() => commentModel.save(articleId, userId, ip, comment, parent_id))
+            .then((commentId) => { // eslint-disable-line
+                return {
+                    userName,
+                    userEmail,
+                    userMd5Email,
+                    userSecret,
+                    commentId: getFirstElementIfArray(commentId)
+                };
+            })
+        );
     });
 }
 
@@ -71,7 +82,7 @@ function saveComment({ slug, parent_id, name, email, ip, comment, notify }) { //
  * @param { Object } req
  * @param { Object } res
  */
-function handleComment(req, res) {
+function addComment(req, res) {
     const handleErr = err => smartErrorHandler(err, res);
 
     try {
@@ -80,8 +91,10 @@ function handleComment(req, res) {
         parseReqData(req)
         .then(
             postData => saveComment(postData)
-            .then(id => sendRes(res, 201, id[0].toString()))
-            .then(() => generateArticleCache(postData.slug))
+            .then(
+                commentValidationParams => sendRes(res, 201)
+                .then(() => sendNewCommentValidationMail(commentValidationParams))
+            )
         )
         .catch(handleErr);
     }
@@ -91,4 +104,4 @@ function handleComment(req, res) {
     }
 }
 
-module.exports = handleComment;
+module.exports = { addComment };

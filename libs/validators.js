@@ -52,5 +52,6 @@ function validateReqParams(post) {
 module.exports = {
     validateReqHeaders,
     validateReqLength,
-    validateReqParams
+    validateReqParams,
+    validateEmail
 };
