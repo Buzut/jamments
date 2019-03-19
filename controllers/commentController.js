@@ -33,7 +33,8 @@ function saveComment({ slug, parent_id, name, email, ip, comment, notify }) { //
                     userEmail,
                     userMd5Email,
                     userSecret,
-                    commentId
+                    commentId,
+                    slug
                 };
             })
         );
