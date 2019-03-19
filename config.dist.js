@@ -34,7 +34,9 @@ module.exports = {
         commentValidationSubject: 'Confirm your comment on Buzut’s blog',
 
         // %name% and %link% will be dynamically replaced by their respective values (\n goes to next line)
-        commentValidationBody: 'Hey %name%!\n\n Thank you very much for leaving a comment on my blog.\n\n Please, just to make sure you’re not a bot, click the following link:\n%link%\n\n Thank you :)'
+        commentValidationBody: 'Hey %name%!\n\n Thank you very much for leaving a comment on my blog.\n\n Please, just to make sure you’re not a bot, click the following link:\n%link%\n\n Thank you :)',
+        linkValidationAddrIsCommentPage: true, // validation link goes to article page or root domain
+        linkValidationAddrTrailingSlash: true // whether to add a slash at the end of the url before url params (buzut.net/article/?p=… VS buzut.net/article?p=…)
     },
 
     // this doesn't need to be changed either
