@@ -40,9 +40,9 @@ function sendNewCommentValidationMail({ userName, userEmail, userMd5Email, userS
     const linkParams = encodeURIComponent(JSON.stringify({ md5_email: userMd5Email, user_secret: userSecret, comment_id: commentId }));
 
     if (config.email.linkValidationAddrIsCommentPage && config.email.linkValidationAddrTrailingSlash) link = `${config.siteUrl}/${cleanSlug(slug)}/?p=${linkParams}`;
-    else if (config.email.linkValidationAddrIsCommentPage) link = `${config.siteUrl}/${cleanSlug(slug)}?p=${linkParams}`;
-    else if (config.email.linkValidationAddrTrailingSlash) link = `${config.siteUrl}/?p=${linkParams}`;
-    else link = `${config.siteUrl}?p=${linkParams}`;
+    else if (config.email.linkValidationAddrIsCommentPage) link = `${config.siteUrl}/${cleanSlug(slug)}?validate_comment=${linkParams}`;
+    else if (config.email.linkValidationAddrTrailingSlash) link = `${config.siteUrl}/?validate_comment=${linkParams}`;
+    else link = `${config.siteUrl}?validate_comment=${linkParams}`;
 
     return sendMail(userEmail, config.email.commentValidationSubject, config.email.commentValidationBody.replace('%name%', userName).replace('%link%', link));
 }
