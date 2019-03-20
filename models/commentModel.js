@@ -12,6 +12,19 @@ function getAll() {
 }
 
 /**
+ * Compute comments (validated only) per article
+ * @return { Promise }
+ */
+function getCommentsPerArticle() {
+    return db(config.db.commentsTable)
+    .count(`${config.db.commentsTable}.id as total`)
+    .select('slug')
+    .innerJoin(config.db.articlesTable, 'article_id', `${config.db.articlesTable}.id`)
+    .where('approved', true)
+    .groupBy('slug');
+}
+
+/**
  * Get comments for a given slug (w/ authors names)
  * @param { Number } articleId
  * @return { Promise }
@@ -82,6 +95,7 @@ function approve(commentId, userSecret) {
 
 module.exports = {
     getAll,
+    getCommentsPerArticle,
     getForId,
     save,
     approve

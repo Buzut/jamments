@@ -42,6 +42,7 @@ module.exports = {
     // this doesn't need to be changed either
     cacheDirs: {
         ext: '.json',
+        siteInfos: './infos/site', // file & dir here (res: ./infos.site.json)
         article: './article/'
     },
 

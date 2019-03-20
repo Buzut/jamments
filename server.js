@@ -1,10 +1,11 @@
 const http = require('http');
 const config = require('./config');
-const { generateAllCaches } = require('./libs/cacheFilesGenerators');
+const { generateWebsiteInfos, generateAllCaches } = require('./libs/cacheFilesGenerators');
 const logger = require('./libs/logger');
 const sendRes = require('./libs/sendRes');
 const commentController = require('./controllers/commentController');
 
+generateWebsiteInfos().catch(logger.error);
 generateAllCaches().catch(logger.error);
 
 http.createServer((req, res) => {

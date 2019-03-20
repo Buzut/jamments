@@ -3,9 +3,25 @@ const { writeFile } = require('fs');
 const config = require('../config');
 const articleModel = require('../models/articleModel');
 const commentModel = require('../models/commentModel');
-const { cleanSlug } = require('./stringProcessors');
+const { cleanSlug, hashToMd5 } = require('./stringProcessors');
 
 const writeFileP = promisify(writeFile);
+
+/**
+ * Generate global file info for website with admin hash & comments nb/article
+ * @return { Promise }
+ */
+function generateWebsiteInfos() {
+    return commentModel.getCommentsPerArticle().then((commentsPerArticle) => {
+        const siteInfos = { md5_admin_email: hashToMd5(config.adminEmail), commentsCount: {} };
+
+        commentsPerArticle.forEach((el) => {
+            siteInfos.commentsCount[el.slug] = el.total;
+        });
+
+        return writeFileP(config.cacheDirs.siteInfos + config.cacheDirs.ext, JSON.stringify(siteInfos));
+    });
+}
 
 /**
  * Write content as stringified JSON to a cache file
@@ -48,7 +64,7 @@ function generateAllCaches() {
 }
 
 /**
- * Generate cache file for a given article
+ * Generate cache file for a given article and refresh websitre global infos cache
  * @param { Number } articleId
  * @return { Promise }
  */
@@ -56,11 +72,15 @@ function generateArticleCache(articleId) {
     return articleModel.getSlug(articleId)
     .then(
         slug => commentModel.getForId(articleId)
-        .then(comments => writeCacheFile(slug, comments))
+        .then(comments => Promise.all([
+            generateWebsiteInfos(),
+            writeCacheFile(slug, comments)
+        ]))
     );
 }
 
 module.exports = {
+    generateWebsiteInfos,
     generateAllCaches,
     generateArticleCache
 };

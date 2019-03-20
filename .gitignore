@@ -2,4 +2,5 @@
 config.js
 node_modules
 article/*.json
+infos/*.json
 applogs.log
