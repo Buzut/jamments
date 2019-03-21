@@ -20,5 +20,5 @@ http.createServer((req, res) => {
     return sendRes(res, 404, 'Resource Not Found');
 })
 .listen(config.port, () => {
-    logger.info('Listening for requests');
+    logger.info(`Listening for requests on post: ${config.port}`);
 });
