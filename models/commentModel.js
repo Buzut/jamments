@@ -43,7 +43,7 @@ function getCommentsPerArticle() {
 }
 
 /**
- * Get comments for a given slug (w/ authors names)
+ * Get comments for a given article id (w/ authors names)
  * @param { Number } articleId
  * @return { Promise }
  */
