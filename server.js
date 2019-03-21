@@ -17,8 +17,10 @@ http.createServer((req, res) => {
     if (validateCommentUrl && req.method === 'POST') return commentController.approveComment(req, res, validateCommentUrl[1]);
 
     // delete comment
-    const deleteCommentUrl = RegExp('/comment/([0-9]+)').exec(req.url);
-    if (deleteCommentUrl && req.method === 'DELETE') return commentController.deleteComment(req, res, deleteCommentUrl[1]);
+    const modifyCommentUrl = RegExp('/comment/([0-9]+)').exec(req.url);
+
+    if (modifyCommentUrl && req.method === 'PATCH') return commentController.updateComment(req, res, modifyCommentUrl[1]);
+    if (modifyCommentUrl && req.method === 'DELETE') return commentController.deleteComment(req, res, modifyCommentUrl[1]);
 
     // unknown route
     return sendRes(res, 404, 'Resource Not Found');

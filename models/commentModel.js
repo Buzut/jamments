@@ -3,6 +3,24 @@ const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 
 /**
+ * Check whether user is owner of comment (return comment id if yest, undefined otherwise)
+ * @param { Number } commentId
+ * @param { String } userSecret
+ * @return { Promise }
+ * @return { Promise.resolve<String | Null> } articleId
+ * @return { Promise.reject<Error> } knex Err
+ */
+function confirmCommentOwnerShip(commentId, userSecret) {
+    return db(config.db.commentsTable)
+    .first(`${config.db.commentsTable}.id`)
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+    .where({
+        [`${config.db.commentsTable}.id`]: commentId,
+        secret: userSecret
+    });
+}
+
+/**
  * Get all comments (w/ authors names)
  * @return { Promise }
  */
@@ -94,7 +112,27 @@ function approve(commentId, userSecret) {
 }
 
 /**
- * Delete comment if user is author or admin
+ * Update comment if user is author or admin
+ * @param { Number } commentId
+ * @param { String } userSecret
+ * @return { Promise }
+ * @return { Promise.resolve<String> } articleId
+ * @return { Promise.reject<Error> } knex Err or BadRequestError
+ */
+function update(commentId, userSecret, adminSecret, comment) {
+    if (userSecret === adminSecret) {
+        return db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId);
+    }
+
+    return confirmCommentOwnerShip(commentId, userSecret)
+    .then((res) => {
+        if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
+        return db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId);
+    });
+}
+
+/**
+ * Delete comment if user is author (and allowed) or admin
  * @param { Number } commentId
  * @param { String } userSecret
  * @return { Promise }
@@ -107,13 +145,7 @@ function erase(commentId, userSecret, adminSecret) {
     }
 
     if (config.userCanDeleteComments) {
-        return db(config.db.commentsTable)
-        .first(`${config.db.commentsTable}.id`)
-        .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
-        .where({
-            [`${config.db.commentsTable}.id`]: commentId,
-            secret: userSecret
-        })
+        return confirmCommentOwnerShip(commentId, userSecret)
         .then((res) => {
             if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
             return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId);
@@ -129,5 +161,6 @@ module.exports = {
     getForId,
     save,
     approve,
+    update,
     erase
 };

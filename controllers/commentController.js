@@ -10,6 +10,13 @@ const commentModel = require('../models/commentModel');
 const notificationModel = require('../models/notificationModel');
 const userModel = require('../models/userModel');
 
+const userSecretValidator = {
+    name: 'user_secret',
+    type: 'string',
+    validator: v => v.length(18),
+    failMsg: 'user_secret should be 18 chars'
+};
+
 /**
  * Save comment infos in their respective tables
  * @param { Object } param
@@ -78,12 +85,7 @@ function addComment(req, res) {
  * @param { String } commentId
  */
 function approveComment(req, res, commentId) {
-    validateRequest(req, [{
-        name: 'user_secret',
-        type: 'string',
-        validator: v => v.length(18),
-        failMsg: 'user_secret should be 18 chars'
-    }])
+    validateRequest(req, [userSecretValidator])
     .then(post => commentModel.approve(commentId, post.user_secret))
     .then((articleId) => {
         sendRes(res, 204);
@@ -98,13 +100,27 @@ function approveComment(req, res, commentId) {
  * @param { Object } res
  * @param { String } commentId
  */
+function updateComment(req, res, commentId) {
+    validateRequest(req, [
+        userSecretValidator,
+        { name: 'comment', type: 'string', validator: v => v.maxLength(3000), failMsg: 'comment cannot be longer than 3000 chars' }, // eslint-disable-line
+    ])
+    .then(
+        post => userModel.getUserSecret(config.adminEmail)
+        .then(adminSecret => commentModel.update(commentId, post.user_secret, adminSecret, post.comment))
+    )
+    .then(() => sendRes(res, 204))
+    .catch(err => smartErrorHandler(err, res));
+}
+
+/**
+ * Delete comment if authorized
+ * @param { Object } req
+ * @param { Object } res
+ * @param { String } commentId
+ */
 function deleteComment(req, res, commentId) {
-    validateRequest(req, [{
-        name: 'user_secret',
-        type: 'string',
-        validator: v => v.length(18),
-        failMsg: 'user_secret should be 18 chars'
-    }])
+    validateRequest(req, [userSecretValidator])
     .then(
         post => userModel.getUserSecret(config.adminEmail)
         .then(adminSecret => commentModel.erase(commentId, post.user_secret, adminSecret))
@@ -116,5 +132,6 @@ function deleteComment(req, res, commentId) {
 module.exports = {
     addComment,
     approveComment,
+    updateComment,
     deleteComment
 };
