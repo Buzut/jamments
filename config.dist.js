@@ -2,7 +2,8 @@ process.env.NODE_ENV = process.env.NODE_ENV ? process.env.NODE_ENV : 'developmen
 
 module.exports = {
     siteUrl: 'https://my-blog.net', // without trailing slash
-    adminEmail: 'hello@my-blog.net',
+    adminEmail: 'hello@my-blog.net', // you'll have to leave at least one comment with admin email to be able to edit/delete comments
+    userCanDeleteComments: false, // can user delete its own comments? (if false, only admin can)
 
     db: {
         // check options at https://knexjs.org/

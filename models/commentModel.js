@@ -93,10 +93,41 @@ function approve(commentId, userSecret) {
     });
 }
 
+/**
+ * Delete comment if user is author or admin
+ * @param { Number } commentId
+ * @param { String } userSecret
+ * @return { Promise }
+ * @return { Promise.resolve<String> } articleId
+ * @return { Promise.reject<Error> } knex Err or BadRequestError
+ */
+function erase(commentId, userSecret, adminSecret) {
+    if (userSecret === adminSecret) {
+        return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId);
+    }
+
+    if (config.userCanDeleteComments) {
+        return db(config.db.commentsTable)
+        .first(`${config.db.commentsTable}.id`)
+        .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+        .where({
+            [`${config.db.commentsTable}.id`]: commentId,
+            secret: userSecret
+        })
+        .then((res) => {
+            if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
+            return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId);
+        });
+    }
+
+    return Promise.reject(new BadRequestError('User is not allowed to delete this comment'));
+}
+
 module.exports = {
     getAll,
     getCommentsPerArticle,
     getForId,
     save,
-    approve
+    approve,
+    erase
 };

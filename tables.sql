@@ -29,6 +29,7 @@ CREATE TABLE comments (
     CONSTRAINT fk_com_parent
         FOREIGN KEY (parent_id)
         REFERENCES comments (id)
+        ON DELETE SET NULL
     CONSTRAINT fk_com_article
         FOREIGN KEY (article_id)
         REFERENCES articles (id)

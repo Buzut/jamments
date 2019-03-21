@@ -1,3 +1,4 @@
+const config = require('../config');
 const { sendNewCommentValidationMail } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
@@ -74,6 +75,7 @@ function addComment(req, res) {
  * Check if commentId & userSecret match and confirm comment
  * @param { Object } req
  * @param { Object } res
+ * @param { String } commentId
  */
 function approveComment(req, res, commentId) {
     validateRequest(req, [{
@@ -90,4 +92,29 @@ function approveComment(req, res, commentId) {
     .catch(err => smartErrorHandler(err, res));
 }
 
-module.exports = { addComment, approveComment };
+/**
+ * Delete comment if authorized
+ * @param { Object } req
+ * @param { Object } res
+ * @param { String } commentId
+ */
+function deleteComment(req, res, commentId) {
+    validateRequest(req, [{
+        name: 'user_secret',
+        type: 'string',
+        validator: v => v.length(18),
+        failMsg: 'user_secret should be 18 chars'
+    }])
+    .then(
+        post => userModel.getUserSecret(config.adminEmail)
+        .then(adminSecret => commentModel.erase(commentId, post.user_secret, adminSecret))
+    )
+    .then(() => sendRes(res, 204))
+    .catch(err => smartErrorHandler(err, res));
+}
+
+module.exports = {
+    addComment,
+    approveComment,
+    deleteComment
+};

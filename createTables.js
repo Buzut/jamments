@@ -42,7 +42,7 @@ function createComments() {
             table.timestamp('submitted_at').defaultTo(db.fn.now());
             table.text('comment');
             table.boolean('approved').defaultTo(false);
-            table.foreign('parent_id', 'fk_com_parent').references('comments.id');
+            table.foreign('parent_id', 'fk_com_parent').references('comments.id').onDelete('SET NULL');
             table.foreign('article_id', 'fk_com_article').references('articles.id');
             table.foreign('user_id', 'fk_com_user').references('users.id');
         });

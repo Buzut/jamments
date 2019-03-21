@@ -1,5 +1,6 @@
 const uniqid = require('uniqid');
 const config = require('../config');
+const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 const { trim, lowerCase, hashToMd5 } = require('../libs/stringProcessors');
 
@@ -30,4 +31,12 @@ function save(name, email) {
     });
 }
 
-module.exports = { save };
+function getUserSecret(email) {
+    return db(config.db.usersTable).first('secret').where('md5_email', hashToMd5(lowerCase(trim(email))))
+    .then((res) => {
+        if (!res) Promise.reject(new BadRequestError('User’s email can’t be found'));
+        return res.secret;
+    });
+}
+
+module.exports = { save, getUserSecret };
