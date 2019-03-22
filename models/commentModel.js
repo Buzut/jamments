@@ -12,7 +12,7 @@ const db = require('../libs/connectDb');
  */
 function confirmCommentOwnerShip(commentId, userSecret) {
     return db(config.db.commentsTable)
-    .first(`${config.db.commentsTable}.id`)
+    .first('article_id')
     .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
     .where({
         [`${config.db.commentsTable}.id`]: commentId,
@@ -98,12 +98,7 @@ function save(articleId, userId, ip, comment, parentId) {
  * @return { Promise.reject<Error> } knex Err or BadRequestError
  */
 function approve(commentId, userSecret) {
-    return db(config.db.commentsTable).first('article_id')
-    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
-    .where({
-        [`${config.db.commentsTable}.id`]: commentId,
-        secret: userSecret
-    })
+    return confirmCommentOwnerShip(commentId, userSecret)
     .then((res) => {
         if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
         return db(config.db.commentsTable).update('approved', true).where('id', commentId)
@@ -121,13 +116,18 @@ function approve(commentId, userSecret) {
  */
 function update(commentId, userSecret, adminSecret, comment) {
     if (userSecret === adminSecret) {
-        return db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId);
+        return db(config.db.commentsTable).first('article_id').where(`${config.db.commentsTable}.id`, commentId)
+        .then(
+            res => db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId)
+            .then(() => res.article_id)
+        );
     }
 
     return confirmCommentOwnerShip(commentId, userSecret)
     .then((res) => {
         if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
-        return db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId);
+        return db(config.db.commentsTable).update({ comment }).where(`${config.db.commentsTable}.id`, commentId)
+        .then(() => res.article_id);
     });
 }
 
@@ -141,14 +141,19 @@ function update(commentId, userSecret, adminSecret, comment) {
  */
 function erase(commentId, userSecret, adminSecret) {
     if (userSecret === adminSecret) {
-        return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId);
+        return db(config.db.commentsTable).first('article_id').where(`${config.db.commentsTable}.id`, commentId)
+        .then(
+            res => db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId)
+            .then(() => res.article_id)
+        );
     }
 
     if (config.userCanDeleteComments) {
         return confirmCommentOwnerShip(commentId, userSecret)
         .then((res) => {
             if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
-            return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId);
+            return db(config.db.commentsTable).delete().where(`${config.db.commentsTable}.id`, commentId)
+            .then(() => res.article_id);
         });
     }
 

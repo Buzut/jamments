@@ -109,7 +109,10 @@ function updateComment(req, res, commentId) {
         post => userModel.getUserSecret(config.adminEmail)
         .then(adminSecret => commentModel.update(commentId, post.user_secret, adminSecret, post.comment))
     )
-    .then(() => sendRes(res, 204))
+    .then((articleId) => {
+        sendRes(res, 204);
+        return generateArticleCache(articleId);
+    })
     .catch(err => smartErrorHandler(err, res));
 }
 
@@ -125,7 +128,10 @@ function deleteComment(req, res, commentId) {
         post => userModel.getUserSecret(config.adminEmail)
         .then(adminSecret => commentModel.erase(commentId, post.user_secret, adminSecret))
     )
-    .then(() => sendRes(res, 204))
+    .then((articleId) => {
+        sendRes(res, 204);
+        return generateArticleCache(articleId);
+    })
     .catch(err => smartErrorHandler(err, res));
 }
 
