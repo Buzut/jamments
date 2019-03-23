@@ -51,4 +51,4 @@ function sendNewCommentValidationMail({ userName, userEmail, userMd5Email, userS
 //
 // }
 
-module.exports = { sendNewCommentValidationMail };
+module.exports = { sendMail, sendNewCommentValidationMail };
