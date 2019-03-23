@@ -1,7 +1,7 @@
 # Jamments API
 As said, this is a purely HTTP REST API. 100% JAMstack compatible. `GET`, `POST`, `PATCH` and `DELETE` the way you want, it's all yours.
 
-For full control, head over to the [API documentation](https://buzut.github.io/flightdom/api/)
+For full control, head over to the [API documentation](https://buzut.github.io/jamments/api/).
 
 ## Exemples
 Fetch comments by requesting the slug of your page with the JSON extension:
