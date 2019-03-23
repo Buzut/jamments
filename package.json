@@ -18,12 +18,13 @@
   "author": "Buzut (https://buzut.net)",
   "license": "BSD-2-Clause",
   "devDependencies": {
+    "apidoc": "^0.17.7",
+    "docsify-cli": "^4.3.0",
     "eslint": "^5.15.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0"
   },
   "dependencies": {
-    "docsify-cli": "^4.3.0",
     "emailjs": "^2.2.0",
     "knex": "^0.16.3",
     "mssql": "^5.0.0",
