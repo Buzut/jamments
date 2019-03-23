@@ -1,7 +1,7 @@
 # Jamments
 Jamments, which stands for JAMstack comments, is a self hosted commenting API that just works with your site.
 
-There's no script to include, no automatic DOM injection, no default CSS to customize, you're in full control. It's a dead simple REST API that seamlessly integrates to your already existing [JAMstack](https://jamstack.org/).
+There's no script to include, no automatic DOM injection, no default CSS to customize, you're in full control. It's a dead simple REST API that seamlessly integrates with your already existing [JAMstack](https://jamstack.org/).
 
 You're free to choose the database you want to work with:
 
