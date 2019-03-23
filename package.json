@@ -4,6 +4,7 @@
   "description": "A comment API tailor made for the JAMstack",
   "main": "server.js",
   "scripts": {
+    "serveDocs": "docsify serve docs",
     "prepare": "test -d .git && cd .git/hooks/ && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/commit-msg && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/prepare-commit-msg && chmod +x *",
     "createTables": "node createTables"
   },
@@ -22,6 +23,7 @@
     "eslint-plugin-import": "^2.16.0"
   },
   "dependencies": {
+    "docsify-cli": "^4.3.0",
     "emailjs": "^2.2.0",
     "knex": "^0.16.3",
     "mssql": "^5.0.0",

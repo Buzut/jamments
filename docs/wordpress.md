@@ -20,7 +20,7 @@ If not setting MySQL properly, on import, all the TIMESTAMPS would be considered
 
 Check out what your server config is:
 
-```sql
+```
 SELECT @@global.time_zone, @@session.time_zone;
 +--------------------+---------------------+
 | @@global.time_zone | @@session.time_zone |
@@ -31,14 +31,14 @@ SELECT @@global.time_zone, @@session.time_zone;
 
 MySQL states here that it uses the time provided by the OS. So let's check this:
 
-```shell
+```
 date
 Jeu  7 mar 2019 20:25:07 EST
 ```
 
 Not matching. So I stop the MySQL server (local machine, there's no impact here), update the session timezone and start it again.
 
-```shell
+```
 mysqld stop
 export TZ=Europe/Paris
 
@@ -52,7 +52,7 @@ mysqld start
 
 ## Remove WordPress spam comments
 
-```sql
+```
 DELETE FROM wp_comments WHERE comment_approved = 'spam';
 ```
 
@@ -60,7 +60,7 @@ DELETE FROM wp_comments WHERE comment_approved = 'spam';
 
 You need to manually create the database.
 
-```sql
+```
 CREATE DATABASE blog_comments DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ```
 
@@ -69,4 +69,8 @@ You have to set the `config.js` and the `wpDbConf` object in `migrateWordPress.j
 Now, just run `npm run createTables` to create the tables and you should be good to go.
 You only have to `node migrateWordPress` to migrate your comments from WordPress.
 
-This script is quick and dirty and I'm pretty sure there is a better way, especially through the WordPress API that could be directly interfaced with JAMstack comments' API. This would be way better and more future proof. If you have time to tackle this, please PR!
+The [WordPress migrate script](https://github.com/Buzut/jamments/blob/master/migrateWordpress.js) is quick and dirty and I'm pretty sure there is a better way, especially through the WordPress API that could be directly interfaced with JAMstack comments' API. This would be way better and more future proof. If you have time to tackle this, please PR!
+
+Also, it makes no assumption on your comments' format. So if there is any HTML, it'll stay like this in the database. If you whish to convert some HTML tags like `a`, `strong` or `em` to Markodwn for further usage, it's time to remmeber your REGEX skills!
+
+The script is pretty easy to hack.
