@@ -29,7 +29,7 @@ Apache website configuration files are usually placed in `/etc/apache2/sites-ava
   # Configure CORS policy
   # Authorize your website to make AJAX request (you can auth several websites)
   Header always set Access-Control-Allow-Origin "https://my-blog.net"
-  Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+  Header always set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PATCH"
   Header always set Access-Control-Max-Age 86400
   Header always set Access-Control-Allow-Headers "x-requested-with, Content-Type, origin, authorization, accept, client-security-token"
   Header always set Access-Control-Expose-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
