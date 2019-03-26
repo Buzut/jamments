@@ -1,5 +1,5 @@
 const config = require('../config');
-const { sendNewCommentValidationMail } = require('../libs/emailSenders');
+const { sendNewCommentValidationMail, sendNewCommentNotification } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
 const { generateArticleCache } = require('../libs/cacheFilesGenerators');
@@ -87,9 +87,15 @@ function addComment(req, res) {
 function approveComment(req, res, commentId) {
     validateRequest(req, [userSecretValidator])
     .then(post => commentModel.approve(commentId, post.user_secret))
-    .then((articleId) => {
+    .then(([articleId, slug]) => {
         sendRes(res, 204);
-        return generateArticleCache(articleId);
+
+        return notificationModel.getArticleSubscribersInfos(articleId).then(
+            subscribersInfos => Promise.all([
+                generateArticleCache(articleId),
+                sendNewCommentNotification(subscribersInfos, articleId, slug)
+            ])
+        );
     })
     .catch(err => smartErrorHandler(err, res));
 }

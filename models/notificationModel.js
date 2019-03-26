@@ -2,6 +2,17 @@ const config = require('../config');
 const db = require('../libs/connectDb');
 
 /**
+ * Get informations on an article's subscribers (user id, name, email, secret)
+ * @param { Number } articleId
+ * @return { Promise }
+ */
+function getArticleSubscribersInfos(articleId) {
+    return db(config.db.notificationsTable).select(`${config.db.usersTable}.id as user_id`, 'name', 'email', 'secret')
+    .innerJoin(config.db.usersTable, `${config.db.usersTable}.id`, 'user_id')
+    .where({ article_id: articleId });
+}
+
+/**
  * Save user notification preference for an article (if not already set)
  * @param { Array } userId
  * @param { Array } articleId
@@ -16,4 +27,4 @@ function save(userId, articleId, notify) {
     });
 }
 
-module.exports = { save };
+module.exports = { save, getArticleSubscribersInfos };

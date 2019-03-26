@@ -3,7 +3,7 @@ const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 
 /**
- * Check whether user is owner of comment (return comment id if yest, undefined otherwise)
+ * Check whether user is owner of comment (return article id if yes, undefined otherwise)
  * @param { Number } commentId
  * @param { String } userSecret
  * @return { Promise }
@@ -98,11 +98,18 @@ function save(articleId, userId, ip, comment, parentId) {
  * @return { Promise.reject<Error> } knex Err or BadRequestError
  */
 function approve(commentId, userSecret) {
-    return confirmCommentOwnerShip(commentId, userSecret)
+    return db(config.db.commentsTable)
+    .first('article_id', 'slug')
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+    .innerJoin(config.db.articlesTable, 'article_id', `${config.db.articlesTable}.id`)
+    .where({
+        [`${config.db.commentsTable}.id`]: commentId,
+        secret: userSecret
+    })
     .then((res) => {
         if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
         return db(config.db.commentsTable).update('approved', true).where('id', commentId)
-        .then(() => res.article_id);
+        .then(() => [res.article_id, res.slug]);
     });
 }
 
