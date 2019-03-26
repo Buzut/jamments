@@ -100,6 +100,7 @@ function validateRequest(req, paramsList) {
             else paramName = param;
 
             if (paramCoerce && (paramType === 'integer' || paramType === 'number')) post[paramName] = Number(post[paramName]);
+            else if (paramCoerce && paramType === 'boolean') post[paramName] = (post[paramName] === 'true' || post[paramName] === true);
             const paramValue = post[paramName];
 
             // validate presence
