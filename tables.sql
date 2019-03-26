@@ -26,6 +26,7 @@ CREATE TABLE comments (
     comment TEXT,
     approved BOOL NOT NULL DEFAULT FALSE,
     PRIMARY KEY (id),
+    INDEX ind_article_id (article_id),
     CONSTRAINT fk_com_parent
         FOREIGN KEY (parent_id)
         REFERENCES comments (id)

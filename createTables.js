@@ -36,7 +36,7 @@ function createComments() {
         return db.schema.withSchema(config.db.connection.database).createTable(config.db.commentsTable, (table) => {
             table.increments('id').unsigned().primary();
             table.integer('parent_id').unsigned();
-            table.integer('article_id').unsigned().notNullable();
+            table.integer('article_id').unsigned().notNullable().index('article_id');
             table.integer('user_id').unsigned().notNullable();
             table.string('ip').notNullable();
             table.timestamp('submitted_at').defaultTo(db.fn.now());
