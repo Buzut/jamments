@@ -208,17 +208,15 @@ http.createServer((req, res) => {
     if (modifyCommentUrl && req.method === 'DELETE') return commentController.deleteComment(req, res, modifyCommentUrl[1]);
 
     /**
-     * @api { PATCH } /notification/article/:article_id Update a comment
-     * @apiName updateComment
-     * @apiGroup Comments
+     * @api { PATCH } /notification/article/:article_id Update notification behaviour
+     * @apiName updateNotification
+     * @apiGroup Notifications
      *
      * @apiParam { String } article_id Passed in url
      *
      * @apiParam { String } user_id As received in the notification email
      *
      * @apiParam { String } user_secret As received in the notification email
-     *
-     * @apiParam { String{..3000} } comment
      *
      * @apiSuccess (204) { Null } null
      *
