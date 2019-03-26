@@ -37,12 +37,12 @@ function sendMail(to, subject, text) {
  */
 function sendNewCommentValidationMail({ userName, userEmail, userMd5Email, userSecret, commentId, slug }) { // eslint-disable-line
     let link;
-    const linkParams = encodeURIComponent(JSON.stringify({ md5_email: userMd5Email, user_secret: userSecret, comment_id: commentId }));
+    const linkParams = `validate_comment=1&md5_email=${userMd5Email}&user_secret=${userSecret}&comment_id=${commentId}`;
 
-    if (config.email.linkValidationAddrIsCommentPage && config.email.linkTrailingSlash) link = `${config.siteUrl}/${cleanSlug(slug)}/?validate_comment=${linkParams}`;
-    else if (config.email.linkValidationAddrIsCommentPage) link = `${config.siteUrl}/${cleanSlug(slug)}?validate_comment=${linkParams}`;
-    else if (config.email.linkTrailingSlash) link = `${config.siteUrl}/?validate_comment=${linkParams}`;
-    else link = `${config.siteUrl}?validate_comment=${linkParams}`;
+    if (config.email.linkValidationAddrIsCommentPage && config.email.linkTrailingSlash) link = `${config.siteUrl}/${cleanSlug(slug)}/?${linkParams}`;
+    else if (config.email.linkValidationAddrIsCommentPage) link = `${config.siteUrl}/${cleanSlug(slug)}?${linkParams}`;
+    else if (config.email.linkTrailingSlash) link = `${config.siteUrl}/?${linkParams}`;
+    else link = `${config.siteUrl}?${linkParams}`;
 
     return sendMail(
         userEmail,
