@@ -25,7 +25,8 @@ function confirmCommentOwnerShip(commentId, userSecret) {
  * @return { Promise }
  */
 function getAll() {
-    return db(config.db.commentsTable).select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment', 'article_id')
+    return db(config.db.commentsTable)
+    .select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment', 'article_id')
     .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`);
 }
 
@@ -66,7 +67,7 @@ function getForId(id) {
  */
 function save(articleId, userId, ip, comment, parentId) {
     if (parentId && parentId) {
-        return db(config.db.commentsTable).first('id').where({ id: parentId, article_id: articleId })
+        return db(config.db.commentsTable).first('id').where({ article_id: articleId, id: parentId })
         .then((res) => {
             if (!res) return Promise.reject(new BadRequestError('parent_id must be a valid article id'));
             return db(config.db.commentsTable).insert({
