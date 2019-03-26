@@ -1,5 +1,5 @@
 # Email links
-Users will receibe emails that contain "action links". For these action to work properly, your frontend must capture the links GET parameters to interract with the API.
+Users will receibe emails that contain "action links". For these action to work properly, your frontend must capture the links `GET` parameters to interract with the API.
 
 ## New comment confirmation
 This mail is sent to any user submitting a new comment. By both receiving the email and clicking its link, the user proves he's not a robot a probably not a spammer.
@@ -36,7 +36,7 @@ When a user receives a new notification email, there's a link allowing him to un
 * user_id
 * user_secret
 
-Again, you'll need to capture GET parameters to interact with the API's [update notification](https://buzut.github.io/jamments/api/#api-Notifications-updateNotification) endpoint.
+Again, you'll need to capture `GET` parameters to interact with the API's [update notification](https://buzut.github.io/jamments/api/#api-Notifications-updateNotification) endpoint.
 
 ```javascript
 const params = new URLSearchParams(window.location.search.substring(1));
