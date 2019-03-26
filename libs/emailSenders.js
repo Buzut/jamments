@@ -82,7 +82,7 @@ function sendNewCommentNotification(recipients, articleId, slug) {
     promises.push(sendMail(
         config.adminEmail,
         config.email.newCommentSubject,
-        config.email.newCommentAdminBody.replace('%unsubscribelink%', unsubscribelink)
+        config.email.newCommentAdminBody.replace('%conversationlink%', conversationlink)
     ));
 
     return Promise.all(promises);
