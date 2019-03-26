@@ -5,17 +5,11 @@ const sendRes = require('../libs/sendRes');
 const { generateArticleCache } = require('../libs/cacheFilesGenerators');
 const smartErrorHandler = require('../libs/smartErrorHandler');
 const validateRequest = require('../libs/validateRequest');
+const userSecretValidator = require('../libs/userSecretValidator');
 const articleModel = require('../models/articleModel');
 const commentModel = require('../models/commentModel');
 const notificationModel = require('../models/notificationModel');
 const userModel = require('../models/userModel');
-
-const userSecretValidator = {
-    name: 'user_secret',
-    type: 'string',
-    validator: v => v.length(18),
-    failMsg: 'user_secret should be 18 chars'
-};
 
 /**
  * Save comment infos in their respective tables

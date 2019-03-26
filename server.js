@@ -4,6 +4,7 @@ const { generateWebsiteInfos, generateAllCaches } = require('./libs/cacheFilesGe
 const logger = require('./libs/logger');
 const sendRes = require('./libs/sendRes');
 const commentController = require('./controllers/commentController');
+const notificationController = require('./controllers/notificationController');
 
 generateWebsiteInfos().catch(logger.error);
 generateAllCaches().catch(logger.error);
@@ -205,6 +206,40 @@ http.createServer((req, res) => {
      *    userSecretErr user_secret should be 18 chars
      */
     if (modifyCommentUrl && req.method === 'DELETE') return commentController.deleteComment(req, res, modifyCommentUrl[1]);
+
+    /**
+     * @api { PATCH } /notification/article/:article_id Update a comment
+     * @apiName updateComment
+     * @apiGroup Comments
+     *
+     * @apiParam { String } article_id Passed in url
+     *
+     * @apiParam { String } user_id As received in the notification email
+     *
+     * @apiParam { String } user_secret As received in the notification email
+     *
+     * @apiParam { String{..3000} } comment
+     *
+     * @apiSuccess (204) { Null } null
+     *
+     * @apiSuccessExample Success-Response:
+     *     HTTP/2.0 204 No Content
+     *
+     * @apiError { text/plain } typeErr paramX param must be a typeY
+     *
+     * @apiError { text/plain } userSecretErr user_secret should be 18 chars
+     *
+     * @apiError { text/plain } mismatch Either comment_id, user_id or user_secret don’t match
+     *
+     * @apiErrorExample Error-Response:
+     *    HTTP/2.0 404 Not Found
+     *
+     * @apiErrorExample Error-Response:
+     *    HTTP/2.0 400 Bad Request
+     *    userSecretErr user_secret should be 18 chars
+     */
+    const validateNotification = RegExp('/notification/article/([0-9]+)').exec(req.url);
+    if (validateNotification && req.method === 'PATCH') return notificationController.updateSubscription(req, res, validateNotification[1]);
 
     // unknown route
     return sendRes(res, 404, 'Resource Not Found');

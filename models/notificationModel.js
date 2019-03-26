@@ -1,4 +1,5 @@
 const config = require('../config');
+const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 
 /**
@@ -27,4 +28,27 @@ function save(userId, articleId, notify) {
     });
 }
 
-module.exports = { save, getArticleSubscribersInfos };
+/**
+ * Update user notification preference for an article
+ * @param { Number } articleId
+ * @param { Number } userId
+ * @param { String } userSecret
+ * @param { Bool } subscribe
+ * @return { Promise }
+ */
+function update(articleId, userId, userSecret, subscribe) {
+    return db(config.db.notificationsTable)
+    .first(`${config.db.notificationsTable}.id`)
+    .innerJoin(config.db.usersTable, `${config.db.usersTable}.id`, 'user_id')
+    .where({ article_id: articleId, user_id: userId, secret: userSecret })
+    .then((res) => {
+        if (!res) return Promise.reject(new BadRequestError('Either comment_id, user_id or user_secret don’t match'));
+
+        return db(config.db.notificationsTable)
+        .update('notify', subscribe)
+        .innerJoin(config.db.usersTable, `${config.db.usersTable}.id`, 'user_id')
+        .where({ article_id: articleId, user_id: userId, secret: userSecret });
+    });
+}
+
+module.exports = { save, getArticleSubscribersInfos, update };
