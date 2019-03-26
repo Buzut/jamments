@@ -13,6 +13,7 @@
 - Connecting the Front-End
   - [Using jamments-front](jamments-front.md)
   - [Directly using the HTTP API](jamments-api.md)
+  - [Email links](email-links.md)
 
 - Migrate
 
