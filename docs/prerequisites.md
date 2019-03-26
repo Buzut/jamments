@@ -10,7 +10,7 @@ The production environment requires the following stack:
 ## Node.js & npm
 On most Linux distros, you should be able to install Node straight from your package manager. Nevertheless, it might be to old of a version (Ubuntu < 18.04 for instance).
 
-In this case you'd better install Node by following the instruction on the [official documentation](https://nodejs.org/en/).
+In this case you'd better install Node by following the instructions on the [official documentation](https://nodejs.org/en/).
 
 ## Database
 We won't detail here how to install the database itself. I'm pretty confident you know how to do that. Let's log into the SQL CLI and create our database and user.

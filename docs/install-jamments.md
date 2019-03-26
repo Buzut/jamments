@@ -9,10 +9,10 @@ For the exemples below, let's say we downloaded and unzipped our directory and i
 First thing you have to do is install the dependencies:
 
 ```
-# got to the repository
+# go to the repository
 cd /var/www/jamments
 
-# and install all required dependencies
+# and install all the required dependencies
 npm i
 ```
 
