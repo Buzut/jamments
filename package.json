@@ -6,7 +6,7 @@
   "scripts": {
     "genApiDocs": "apidoc -f server.js -o docs/api",
     "serveDocs": "docsify serve docs",
-    "prepare": "test -d .git && cd .git/hooks/ && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/commit-msg && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/prepare-commit-msg && chmod +x *",
+    "prepare": "test -d .git && cd .git/hooks/ && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/commit-msg && curl -O https://raw.githubusercontent.com/Buzut/git-emojis-hook/master/prepare-commit-msg && chmod +x * || exit 0",
     "createTables": "node createTables"
   },
   "keywords": [
