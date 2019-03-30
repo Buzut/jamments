@@ -22,7 +22,7 @@ You need to manually create the database before everything. You're free to choos
 Also don't forget to replace `YOUR PASSWD` by your actual password 😉
 
 ```
-CREATE DATABASE blog_comments DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE DATABASE blog_comments DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- dedicated user could be a good thing too
 CREATE USER comments@localhost IDENTIFIED BY 'YOUR PASSWD';

@@ -12,7 +12,8 @@ module.exports = {
             host: '127.0.0.1',
             user: 'root',
             password: '',
-            database: 'blog_comments'
+            database: 'blog_comments',
+            charset: 'utf8mb4_unicode_ci'
         },
 
         // no need to change these
