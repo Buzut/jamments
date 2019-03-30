@@ -27,7 +27,8 @@ function confirmCommentOwnerShip(commentId, userSecret) {
 function getAll() {
     return db(config.db.commentsTable)
     .select(`${config.db.commentsTable}.id`, 'parent_id', 'name', 'md5_email', 'submitted_at', 'comment', 'article_id')
-    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`);
+    .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
+    .where('approved', true);
 }
 
 /**
