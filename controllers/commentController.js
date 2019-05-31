@@ -81,13 +81,15 @@ function addComment(req, res) {
 function approveComment(req, res, commentId) {
     validateRequest(req, [userSecretValidator])
     .then(post => commentModel.approve(commentId, post.user_secret))
-    .then(([articleId, slug]) => {
+    .then((articleInfos) => {
         sendRes(res, 204);
 
-        return notificationModel.getArticleSubscribersInfos(articleId).then(
+        if (!articleInfos) return Promise.resolve();
+
+        return notificationModel.getArticleSubscribersInfos(articleInfos.articleId).then(
             subscribersInfos => Promise.all([
-                generateArticleCache(articleId),
-                sendNewCommentNotification(subscribersInfos, articleId, slug)
+                generateArticleCache(articleInfos.articleId),
+                sendNewCommentNotification(subscribersInfos, articleInfos.articleId, articleInfos.slug)
             ])
         );
     })

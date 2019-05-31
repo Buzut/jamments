@@ -101,7 +101,7 @@ function save(articleId, userId, ip, comment, parentId) {
  */
 function approve(commentId, userSecret) {
     return db(config.db.commentsTable)
-    .first('article_id', 'slug')
+    .first('article_id', 'slug', 'approved')
     .innerJoin(config.db.usersTable, 'user_id', `${config.db.usersTable}.id`)
     .innerJoin(config.db.articlesTable, 'article_id', `${config.db.articlesTable}.id`)
     .where({
@@ -110,8 +110,9 @@ function approve(commentId, userSecret) {
     })
     .then((res) => {
         if (!res) return Promise.reject(new BadRequestError('Either comment_id or user_secret don’t match'));
+        if (res.approved) return Promise.resolve();
         return db(config.db.commentsTable).update('approved', true).where('id', commentId)
-        .then(() => [res.article_id, res.slug]);
+        .then(() => ({ articleId: res.article_id, slug: res.slug }));
     });
 }
 
