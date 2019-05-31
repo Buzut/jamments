@@ -1,3 +1,3 @@
-const { sendMail } = require('./libs/emailSenders');
+const { sendMailWithSMTP } = require('./libs/emailSenders');
 
-sendMail('to', 'subject', 'text');
+sendMailWithSMTP('to', 'subject', 'text');

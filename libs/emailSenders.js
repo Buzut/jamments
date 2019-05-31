@@ -1,23 +1,59 @@
 const email = require('emailjs');
+const mailjet = require('node-mailjet');
 const config = require('../config');
 const { cleanSlug } = require('./stringProcessors');
 
-const emailServer = email.server.connect(config.email.server);
+let emailServer;
+let mailjetSend;
+if (config.email.server) emailServer = email.server.connect(config.email.server);
+if (config.email.mailjet) mailjetSend = mailjet.connect(config.email.mailjet.pubkey, config.email.mailjet.privkey);
 
 /**
- * Send an email
+ * Send an email via Mailjet
+ * @param { (String | Array) } to
+ * @param { Number } templateId
+ * @param { String } subject
+ * @param { Object } variables
+ * @return { Promise }
+ */
+function sendMailWithMailjet(to, templateId, subject, variables) {
+    let recipients;
+    if (Array.isArray(to)) recipients = to.map(recipient => ({ Email: recipient }));
+    else recipients = [{ Email: to }];
+
+    return mailjetSend.post('send', { version: 'v3.1' })
+    .request({
+        Messages: [{
+            From: {
+                Email: config.email.senderAddr,
+                Name: config.email.senderName
+            },
+            To: recipients,
+            TemplateID: templateId,
+            TemplateLanguage: true,
+            Subject: subject,
+            Variables: variables
+        }]
+    });
+}
+
+
+/**
+ * Send an email via SMTP
  * @param { (String | Array) } to
  * @param { String } text
  * @param { String } subject
  * @return { Promise }
  */
-function sendMail(to, subject, text) {
+function sendMailWithSMTP(to, subject, text) {
     return new Promise((resolve, reject) => {
+        const from = config.email.senderName ? `${config.email.senderName} <${config.email.senderAddr}>` : config.email.senderAddr;
+
         emailServer.send({
             to,
             subject,
             text,
-            from: config.email.senderAddr
+            from
         }, (err, msg) => {
             if (err) return reject(new Error(err));
             return resolve(msg);
@@ -44,10 +80,19 @@ function sendNewCommentValidationMail({ userName, userEmail, userMd5Email, userS
     else if (config.email.linkTrailingSlash) link = `${config.siteUrl}/?${linkParams}`;
     else link = `${config.siteUrl}?${linkParams}`;
 
-    return sendMail(
+    if (config.email.server) {
+        return sendMailWithSMTP(
+            userEmail,
+            config.email.commentValidationSubject,
+            config.email.commentValidationBody.replace('%name%', userName).replace('%link%', link)
+        );
+    }
+
+    return sendMailWithMailjet(
         userEmail,
+        config.email.commentValidationTemplateId,
         config.email.commentValidationSubject,
-        config.email.commentValidationBody.replace('%name%', userName).replace('%link%', link)
+        { link, name: userName }
     );
 }
 
@@ -72,20 +117,42 @@ function sendNewCommentNotification(recipients, articleId, slug) {
         if (config.email.linkTrailingSlash) unsubscribelink = `${config.siteUrl}/${slug}/?unsubscribe_from_comments_notif=1&article_id=${articleId}&user_id=${recipient.user_id}&user_secret=${recipient.secret}`;
         else unsubscribelink = `${config.siteUrl}/${slug}?unsubscribe_from_comments_notif=1&article_id=${articleId}&user_id=${recipient.user_id}&user_secret=${recipient.secret}`;
 
-        promises.push(sendMail(
-            recipient.email,
-            config.email.newCommentSubject,
-            config.email.newCommentBody.replace('%name%', recipient.name).replace('%conversationlink%', conversationlink).replace('%unsubscribelink%', unsubscribelink)
-        ));
+        if (config.email.server) {
+            promises.push(sendMailWithSMTP(
+                recipient.email,
+                config.email.newCommentSubject,
+                config.email.newCommentBody.replace('%name%', recipient.name).replace('%conversationlink%', conversationlink).replace('%unsubscribelink%', unsubscribelink)
+            ));
+        }
+
+        else {
+            promises.push(sendMailWithMailjet(
+                recipient.email,
+                config.email.newCommentTemplateId,
+                config.email.newCommentSubject,
+                { conversationlink, unsubscribelink, name: recipient.name }
+            ));
+        }
     });
 
-    promises.push(sendMail(
-        config.adminEmail,
-        config.email.newCommentSubject,
-        config.email.newCommentAdminBody.replace('%conversationlink%', conversationlink)
-    ));
+    if (config.email.server) {
+        promises.push(sendMailWithSMTP(
+            config.adminEmail,
+            config.email.newCommentSubject,
+            config.email.newCommentAdminBody.replace('%conversationlink%', conversationlink)
+        ));
+    }
+
+    else {
+        promises.push(sendMailWithMailjet(
+            config.adminEmail,
+            config.email.newCommentAdminTemplateId,
+            config.email.newCommentSubject,
+            { conversationlink }
+        ));
+    }
 
     return Promise.all(promises);
 }
 
-module.exports = { sendMail, sendNewCommentValidationMail, sendNewCommentNotification };
+module.exports = { sendMailWithSMTP, sendNewCommentValidationMail, sendNewCommentNotification };
