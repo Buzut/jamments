@@ -106,6 +106,8 @@ http.createServer((req, res) => {
      *
      * @apiError { text/plain } emailErr email must be an email string
      *
+     * @apiError { text/plain } emailMXErr Your email seems unreachable
+     *
      * @apiError { text/plain } commentErr comment cannot be longer than 3000 chars
      *
      * @apiError { text/plain } parentErr parent_id must be a valid article id

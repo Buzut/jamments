@@ -1,4 +1,6 @@
-const config = require('../config');
+const validateMX = require('email-domain-check');
+const config = require('../config'); // eslint-disable-line
+const BadRequestError = require('../libs/badRequestError');
 const { sendNewCommentValidationMail, sendNewCommentNotification } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
@@ -60,11 +62,18 @@ function addComment(req, res) {
     ];
 
     validateRequest(req, paramsValidation)
-    .then(post => saveComment({
-        ...post,
-        notify: !(typeof post.notify !== 'undefined' && (!post.notify || post.notify === 'false')),
-        ip: req.connection.remoteAddress
-    }))
+    .then(
+        post => validateMX(post.email)
+        .then((isValid) => {
+            if (isValid) return Promise.resolve();
+            return Promise.reject(new BadRequestError('Your email seems unreachable'));
+        })
+        .then(() => saveComment({
+            ...post,
+            notify: !(typeof post.notify !== 'undefined' && (!post.notify || post.notify === 'false')),
+            ip: req.connection.remoteAddress
+        }))
+    )
     .then((commentValidationParams) => {
         sendRes(res, 201);
         return sendNewCommentValidationMail(commentValidationParams);
