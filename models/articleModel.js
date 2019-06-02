@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../config'); // eslint-disable-line
 const db = require('../libs/connectDb');
 const { cleanSlug, hashToMd5 } = require('../libs/stringProcessors');
 

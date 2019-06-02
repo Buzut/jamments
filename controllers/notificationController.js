@@ -1,4 +1,4 @@
-const config = require('../config');
+const config = require('../config'); // eslint-disable-line
 const sendRes = require('../libs/sendRes');
 const smartErrorHandler = require('../libs/smartErrorHandler');
 const validateRequest = require('../libs/validateRequest');

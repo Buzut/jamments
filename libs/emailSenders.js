@@ -1,6 +1,6 @@
 const email = require('emailjs');
 const mailjet = require('node-mailjet');
-const config = require('../config');
+const config = require('../config'); // eslint-disable-line
 const { cleanSlug } = require('./stringProcessors');
 
 let emailServer;

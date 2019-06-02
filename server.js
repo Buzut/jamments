@@ -1,5 +1,5 @@
 const http = require('http');
-const config = require('./config');
+const config = require('./config'); // eslint-disable-line
 const { generateWebsiteInfos, generateAllCaches } = require('./libs/cacheFilesGenerators');
 const logger = require('./libs/logger');
 const sendRes = require('./libs/sendRes');
