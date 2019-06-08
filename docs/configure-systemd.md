@@ -27,7 +27,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-Then reaload Systemd, make the service start on boot and start it:
+Then reload Systemd, make the service start on boot and start it:
 
 ```shell
 systemctl daemon-reload

@@ -30,9 +30,11 @@ They should be self explanatory. You can head to [configuration file](config-fil
 `db` and `email` config objects depend on your actual settings (database and email provider). As these config objects are passed as is to their respective libraries, you'd better check directly their respective documentations for more in depth infos.
 
 * [Database library](https://knexjs.org/)
-* [SMTP library](https://github.com/eleith/emailjs)
+* [SMTP library](https://github.com/eleith/emailjs) (if using the SMTP connector)
 
-To make sure you email configuration is functional, you can use the `sendTestEmail.js` file. Just fill in your information and execute it with `node sendTestEmail.js`. You should receive the email or get an error.
+To make sure your SMTP email configuration is functional, you can use the `sendTestEmail.js` file. Just fill in your information and execute it with `node sendTestEmail.js`. You should receive the email or get an error.
+
+As a matter of fact, you also have the option to send emails through [Mailjet](https://www.mailjet.com/), if you want to take advantage of their pre-built HTML templates.
 
 ### Owner and rights
 Now that your config is good, set up the owner to allow Jamments to work correctly (it'll need to be able to write cache files in its directory). The easier solution is to make Jamment's user the owner of its directory `chown -R www-data /var/www/jamments`. Usually, Jamment's user is the same as the webserver (hence `www-data` or `www` depending on the OS).
