@@ -6,7 +6,7 @@ const logger = require('./logger');
  * @param { Object } err error object
  * @param { Object } res
  */
-function smartErrorHandler(err, res) {
+function handleError(err, res) {
     // send errmsg to user if it's a BadRequestError
     if (res && err.name && err.name === 'BadRequestError') {
         sendRes(res, err.httpStatus, err.message);
@@ -20,4 +20,4 @@ function smartErrorHandler(err, res) {
     logger.error(err);
 }
 
-module.exports = smartErrorHandler;
+module.exports = handleError;

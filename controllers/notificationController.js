@@ -1,6 +1,6 @@
 const config = require('../config'); // eslint-disable-line
 const sendRes = require('../libs/sendRes');
-const smartErrorHandler = require('../libs/smartErrorHandler');
+const handleError = require('../libs/handleError');
 const validateRequest = require('../libs/validateRequest');
 const userSecretValidator = require('../libs/userSecretValidator');
 const notificationModel = require('../models/notificationModel');
@@ -19,7 +19,7 @@ function updateSubscription(req, res, articleId) {
     ])
     .then(post => notificationModel.update(articleId, post.user_id, post.user_secret, post.subscribe))
     .then(() => sendRes(res, 204))
-    .catch(err => smartErrorHandler(err, res));
+    .catch(err => handleError(err, res));
 }
 
 module.exports = { updateSubscription };

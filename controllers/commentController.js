@@ -5,7 +5,7 @@ const { sendNewCommentValidationMail, sendNewCommentNotification } = require('..
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
 const { generateArticleCache } = require('../libs/cacheFilesGenerators');
-const smartErrorHandler = require('../libs/smartErrorHandler');
+const handleError = require('../libs/handleError');
 const validateRequest = require('../libs/validateRequest');
 const userSecretValidator = require('../libs/userSecretValidator');
 const articleModel = require('../models/articleModel');
@@ -78,7 +78,7 @@ function addComment(req, res) {
         sendRes(res, 201);
         return sendNewCommentValidationMail(commentValidationParams);
     })
-    .catch(err => smartErrorHandler(err, res));
+    .catch(err => handleError(err, res));
 }
 
 /**
@@ -102,7 +102,7 @@ function approveComment(req, res, commentId) {
             ])
         );
     })
-    .catch(err => smartErrorHandler(err, res));
+    .catch(err => handleError(err, res));
 }
 
 /**
@@ -124,7 +124,7 @@ function updateComment(req, res, commentId) {
         sendRes(res, 204);
         return generateArticleCache(articleId);
     })
-    .catch(err => smartErrorHandler(err, res));
+    .catch(err => handleError(err, res));
 }
 
 /**
@@ -143,7 +143,7 @@ function deleteComment(req, res, commentId) {
         sendRes(res, 204);
         return generateArticleCache(articleId);
     })
-    .catch(err => smartErrorHandler(err, res));
+    .catch(err => handleError(err, res));
 }
 
 module.exports = {
