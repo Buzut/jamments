@@ -26,6 +26,7 @@
     "eslint-plugin-import": "^2.16.0"
   },
   "dependencies": {
+    "bad-request-error": "^1.0.2",
     "email-domain-check": "^1.1.4",
     "emailjs": "^2.2.0",
     "knex": "^0.16.3",

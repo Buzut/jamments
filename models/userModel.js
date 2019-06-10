@@ -1,6 +1,6 @@
+const BadRequestError = require('bad-request-error');
 const uniqid = require('uniqid');
 const config = require('../config'); // eslint-disable-line
-const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 const { trim, lowerCase, hashToMd5 } = require('../libs/stringProcessors');
 

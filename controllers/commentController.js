@@ -1,6 +1,6 @@
+const BadRequestError = require('bad-request-error');
 const validateMX = require('email-domain-check');
 const config = require('../config'); // eslint-disable-line
-const BadRequestError = require('../libs/badRequestError');
 const { sendNewCommentValidationMail, sendNewCommentNotification } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');

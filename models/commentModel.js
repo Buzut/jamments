@@ -1,5 +1,5 @@
+const BadRequestError = require('bad-request-error');
 const config = require('../config'); // eslint-disable-line
-const BadRequestError = require('../libs/badRequestError');
 const db = require('../libs/connectDb');
 
 /**
