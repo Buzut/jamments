@@ -57,7 +57,7 @@ function addComment(req, res) {
     const paramsValidation = [
         { slug: 'string' },
         { name: 'name', type: 'string', validator: v => v.minLength(3).maxLength(20), failMsg: 'name must be between 3 and 20 chars' }, // eslint-disable-line
-        { name: 'email', customValidator: isEmail, failMsg: 'email must be an email string' },
+        { name: 'email', type: 'string', customValidator: isEmail, failMsg: 'email must be an email string' }, // eslint-disable-line
         { name: 'comment', type: 'string', validator: v => v.maxLength(3000), failMsg: 'comment cannot be longer than 3000 chars' }, // eslint-disable-line
         { name: 'parent_id', type: 'integer', coerce: true, optional: true }, // eslint-disable-line
         { name: 'notify', type: 'boolean', optional: true }
