@@ -1,9 +1,11 @@
+const RequestValidator = require('node-body-validator');
 const config = require('../config'); // eslint-disable-line
 const sendRes = require('../libs/sendRes');
 const handleError = require('../libs/handleError');
-const validateRequest = require('../libs/validateRequest');
 const userSecretValidator = require('../libs/userSecretValidator');
 const notificationModel = require('../models/notificationModel');
+
+const reqValidator = new RequestValidator('form');
 
 /**
  * Update user's subscription on an article's comments
@@ -12,7 +14,7 @@ const notificationModel = require('../models/notificationModel');
  * @param { String } articleId
  */
 function updateSubscription(req, res, articleId) {
-    validateRequest(req, [
+    reqValidator.validate(req, [
         userSecretValidator,
         { user_id: 'String' },
         { name: 'subscribe', type: 'boolean', coerce: true }

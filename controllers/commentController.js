@@ -1,17 +1,19 @@
 const BadRequestError = require('bad-request-error');
 const validateMX = require('email-domain-check');
+const RequestValidator = require('node-body-validator');
 const config = require('../config'); // eslint-disable-line
 const { sendNewCommentValidationMail, sendNewCommentNotification } = require('../libs/emailSenders');
 const isEmail = require('../libs/isEmail');
 const sendRes = require('../libs/sendRes');
 const { generateArticleCache } = require('../libs/cacheFilesGenerators');
 const handleError = require('../libs/handleError');
-const validateRequest = require('../libs/validateRequest');
 const userSecretValidator = require('../libs/userSecretValidator');
 const articleModel = require('../models/articleModel');
 const commentModel = require('../models/commentModel');
 const notificationModel = require('../models/notificationModel');
 const userModel = require('../models/userModel');
+
+const reqValidator = new RequestValidator('form');
 
 /**
  * Save comment infos in their respective tables
@@ -61,7 +63,7 @@ function addComment(req, res) {
         { name: 'notify', type: 'boolean', optional: true }
     ];
 
-    validateRequest(req, paramsValidation)
+    reqValidator.validate(req, paramsValidation)
     .then(
         post => validateMX(post.email)
         .then((isValid) => {
@@ -88,7 +90,7 @@ function addComment(req, res) {
  * @param { String } commentId
  */
 function approveComment(req, res, commentId) {
-    validateRequest(req, [userSecretValidator])
+    reqValidator.validate(req, [userSecretValidator])
     .then(post => commentModel.approve(commentId, post.user_secret))
     .then((articleInfos) => {
         sendRes(res, 204);
@@ -112,7 +114,7 @@ function approveComment(req, res, commentId) {
  * @param { String } commentId
  */
 function updateComment(req, res, commentId) {
-    validateRequest(req, [
+    reqValidator.validate(req, [
         userSecretValidator,
         { name: 'comment', type: 'string', validator: v => v.maxLength(3000), failMsg: 'comment cannot be longer than 3000 chars' }, // eslint-disable-line
     ])
@@ -134,7 +136,7 @@ function updateComment(req, res, commentId) {
  * @param { String } commentId
  */
 function deleteComment(req, res, commentId) {
-    validateRequest(req, [userSecretValidator])
+    reqValidator.validate(req, [userSecretValidator])
     .then(
         post => userModel.getUserSecret(config.adminEmail)
         .then(adminSecret => commentModel.erase(commentId, post.user_secret, adminSecret))

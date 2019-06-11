@@ -32,6 +32,7 @@
     "knex": "^0.16.3",
     "mssql": "^5.0.0",
     "mysql": "^2.16.0",
+    "node-body-validator": "^1.0.2",
     "node-mailjet": "^3.3.1",
     "pg": "^7.8.1",
     "sqlite3": "^4.0.6",
