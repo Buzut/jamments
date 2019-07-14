@@ -5,7 +5,7 @@ CREATE TABLE users (
     md5_email VARCHAR(32) NOT NULL,
     secret VARCHAR(18) NOT NULL,
     PRIMARY KEY (id),
-    INDEX ind_md5 (md5_email)
+    UNIQUE INDEX ind_md5 (md5_email)
 );
 
 CREATE TABLE articles (
@@ -13,7 +13,7 @@ CREATE TABLE articles (
     slug VARCHAR(255) NOT NULL,
     md5_slug VARCHAR(32) NOT NULL,
     PRIMARY KEY (id),
-    INDEX ind_md5 (md5_slug)
+    UNIQUE INDEX ind_md5 (md5_slug)
 );
 
 CREATE TABLE comments (

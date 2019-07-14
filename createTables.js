@@ -11,7 +11,7 @@ function createUsers() {
             table.increments('id').unsigned().primary();
             table.string('name').notNullable();
             table.string('email').notNullable();
-            table.string('md5_email', 32).notNullable().index('ind_md5');
+            table.string('md5_email', 32).notNullable().unique('ind_md5');
             table.string('secret', 18).notNullable();
         });
     });
@@ -24,7 +24,7 @@ function createArticles() {
         return db.schema.withSchema(config.db.connection.database).createTable(config.db.articlesTable, (table) => {
             table.increments('id').unsigned().primary();
             table.string('slug').notNullable();
-            table.string('md5_slug', 32).notNullable().index('ind_md5');
+            table.string('md5_slug', 32).notNullable().unique('ind_md5');
         });
     });
 }
