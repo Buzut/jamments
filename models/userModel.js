@@ -15,7 +15,7 @@ function save(name, email) {
     const cleanedEmail = lowerCase(trim(email));
     const md5Email = hashToMd5(cleanedEmail);
 
-    return db(config.db.usersTable).first('id', 'name', 'email', 'md5_email', 'secret',).where('md5_email', md5Email)
+    return db(config.db.usersTable).first('id', 'name', 'email', 'md5_email', 'secret').where('md5_email', md5Email)
     .then((res) => {
         if (res) return [res.id, res.name, res.email, res.md5_email, res.secret];
 
