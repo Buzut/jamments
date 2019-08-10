@@ -4,7 +4,7 @@ As said, this is a purely HTTP REST API. 100% JAMstack compatible. `GET`, `POST`
 For full control, head over to the [API documentation](https://buzut.github.io/jamments/api/).
 
 ## Exemples
-Fetch comments by requesting the slug of your page with the JSON extension:
+Fetch comments by requesting the slug of your page with the JSON extension (carefull with slashes, see below):
 
 ```javascript
 // comments for page https://my-blog.net/i-love-jamstack/
@@ -25,6 +25,19 @@ getJsonData(`https://comments.my-blog.net/article/${slug}.json`)
     // [{ id: Number, parent_id: Number|Null, name: String, md5_email: String, submitted_at: String, comment: String }, …]
 })
 .catch(errorHandler);
+```
+
+If the article was to be in a subfolder slashes should be replaced by underscores, let's see how to properly escape it.
+
+```javascript
+// comments for page https://my-blog.net/my-life/i-love-jamstack/
+
+…
+
+// slug would end up being my-life_i-love-jamstack
+const slug = window.location.pathname.replace(/^\/|\/$/g, '').replace(/^\//g, '_');
+
+…
 ```
 
 Bear in mind that the comments you get from the API are raw, unsanitized comments, so be cautions, don't expose your users!
