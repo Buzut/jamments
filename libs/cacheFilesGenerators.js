@@ -31,7 +31,7 @@ function generateWebsiteInfos() {
  * @return { Promise }
  */
 function writeCacheFile(slug, content) {
-    const path = config.cacheDirs.article + cleanSlug(slug) + config.cacheDirs.ext;
+    const path = config.cacheDirs.article + slug.replace(/\//g, '_') + config.cacheDirs.ext;
     return writeFileP(path, JSON.stringify(content));
 }
 
