@@ -34,7 +34,7 @@ function save(name, email) {
 function getUserSecret(email) {
     return db(config.db.usersTable).first('secret').where('md5_email', hashToMd5(lowerCase(trim(email))))
     .then((res) => {
-        if (!res) Promise.reject(new BadRequestError('User’s email can’t be found'));
+        if (!res) return Promise.reject(new BadRequestError('User’s email can’t be found'));
         return res.secret;
     });
 }
