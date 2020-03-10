@@ -1,6 +1,6 @@
 {
   "name": "jamstack-comments",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "A comment API tailor made for the JAMstack",
   "main": "server.js",
   "scripts": {
