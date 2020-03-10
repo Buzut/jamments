@@ -16,7 +16,7 @@ const reqValidator = new RequestValidator('form');
 function updateSubscription(req, res, articleId) {
     reqValidator.validate(req, [
         userSecretValidator,
-        { user_id: 'String' },
+        { user_id: 'string' },
         { name: 'subscribe', type: 'boolean', coerce: true }
     ])
     .then(post => notificationModel.update(articleId, post.user_id, post.user_secret, post.subscribe))
