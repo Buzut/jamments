@@ -73,7 +73,7 @@ function addComment(req, res) {
         .then(() => saveComment({
             ...post,
             notify: !(typeof post.notify !== 'undefined' && (!post.notify || post.notify === 'false')),
-            ip: req.connection.remoteAddress
+            ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
         }))
     )
     .then((commentValidationParams) => {
