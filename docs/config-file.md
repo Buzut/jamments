@@ -3,6 +3,7 @@ The options in the [configuration file](https://github.com/Buzut/jamments/blob/m
 
 
 * `siteUrl` is the base url of your website, not the comments subdomain (or domain). It will be used in all sent emails.
+* `manageCORS` whether CORS is managed by Jamments. Set to `true` for Jamments to set CORS HTTP headers or `false` if managed one level up by a reverse proxy or Jamments is running on the same domain.
 * `adminEmail`: admin notifications will be sent to this email. Also, when you validate one of your own comments, if the commenting email matches this one, you'll be considered as admin. Therefore the API will accept `PATH` and `DELETE` request on comments that you don't own if you send the `user_secret` (see API for more details) matching this email.
 * `userCanDeleteComments` allows user to delete their own comments.
 * `db`: as already stated, Jamments uses Knex.js for database operations. Hence, for more details on the config options, you should check out [Knex.js](https://knexjs.org/) website directly.

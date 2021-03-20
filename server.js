@@ -10,6 +10,19 @@ generateWebsiteInfos().catch(logger.error);
 generateAllCaches().catch(logger.error);
 
 http.createServer((req, res) => {
+    if (config.manageCors) {
+        res.setHeader('Access-Control-Allow-Origin', config.siteUrl);
+
+        if (req.method === 'OPTIONS') {
+            res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+            res.setHeader('Access-Control-Allow-Headers', 'uploader-chunk-number,uploader-chunks-total,uploader-file-id');
+            res.setHeader('Access-Control-Max-Age', '86400'); // 24hrs
+            res.writeHead(204, 'No Content');
+            res.end();
+            return;
+        }
+    }
+
     /**
      * SERVED FROM CACHE
      *
