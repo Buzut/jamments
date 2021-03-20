@@ -14,7 +14,7 @@ http.createServer((req, res) => {
         res.setHeader('Access-Control-Allow-Origin', config.siteUrl);
 
         if (req.method === 'OPTIONS') {
-            res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
+            res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE, PATCH');
             res.setHeader('Access-Control-Allow-Headers', 'uploader-chunk-number,uploader-chunks-total,uploader-file-id');
             res.setHeader('Access-Control-Max-Age', '86400'); // 24hrs
             res.writeHead(204, 'No Content');
