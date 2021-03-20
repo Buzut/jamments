@@ -56,7 +56,7 @@ function generateAllCaches() {
             if (Array.isArray(sorted[articleId])) sorted[articleId].push(comment);
             else sorted[articleId] = [comment];
             return sorted;
-        });
+        }, {});
 
         const writePromises = articles.map(article => writeCacheFile(article.slug, sortedComments[article.id]));
         return Promise.all(writePromises);
