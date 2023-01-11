@@ -29,7 +29,7 @@
     "bad-request-error": "^1.0.2",
     "email-domain-check": "^1.1.4",
     "emailjs": "^2.2.0",
-    "knex": "^0.19.5",
+    "knex": "^2.4.0",
     "mssql": "^5.0.0",
     "mysql": "^2.16.0",
     "node-body-validator": "^1.0.2",
